@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Shamir Secret Sharing Scheme</title>
+        <style>
+            main {
+                max-width: 800px;
+                margin: auto;
+                font-family: Arial, sans-serif;
+            }
+
+            :focus {
+                outline-color: #4a90e2;
+                outline-width: 2px;
+                outline-style: solid;
+            }
+
+            input {
+                width: 2rem;
+                padding: 0.5rem;
+                border-radius: 10px;
+                border: 1px solid #ccc;
+            }
+
+            textarea {
+                width: 100%;
+                font-size: 1rem;
+                padding: 0.5rem;
+                border-radius: 10px;
+                border: 1px solid #ccc;
+            }
+
+            button {
+                padding: 0.5rem 0.5rem;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                cursor: pointer;
+            }
+
+            .share-container {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .share {
+                font-family: monospace;
+                font-size: 0.9rem;
+                background-color: #f4f4f4;
+                transition: background-color 0.3s ease-out;
+                padding: 1rem 0.5rem;
+                border-radius: 5px;
+                display: inline-block;
+                flex-grow: 1;
+                overflow-x: hidden;
+                text-overflow: ellipsis;
+            }
+
+            #output .placeholder {
+                background-color: #f9f9f9;
+                padding: 1rem;
+                border-radius: 5px;
+                border: 1px dashed #ccc;
+                font-size: 0.9rem;
+                font-style: italic;
+                display: inline-block;
+                width: 100%;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <h1>Shamir Secret Sharing Scheme</h1>
+            <div>
+                <p>
+                    Split your secret into parts which can be combined back into
+                    the original secret using some or all of the parts.
+                </p>
+                <p>
+                    Require
+                    <input
+                        id="requiredParts"
+                        type="number"
+                        value="3"
+                        min="2"
+                        max="255"
+                        oninput="updateParts()"
+                    />
+                    parts from
+                    <input
+                        id="totalParts"
+                        type="number"
+                        value="5"
+                        min="2"
+                        max="255"
+                        oninput="updateParts()"
+                    />
+                    to reconstruct the following secret
+                </p>
+                <textarea
+                    id="secret"
+                    rows="10"
+                    placeholder="Enter your secret here"
+                    oninput="updateParts()"
+                ></textarea>
+            </div>
+
+            <h2>Generated Parts:</h2>
+            <details>
+                <summary>Include custom header</summary>
+
+                <p>
+                    Optionally add a custom header to the generated parts, can
+                    be useful to attach additional explanations in the parts'
+                    HTML files.
+                </p>
+                <textarea
+                    id="customHeader"
+                    rows="5"
+                    placeholder="Enter custom header here"
+                    oninput="updateParts()"
+                ></textarea>
+            </details>
+
+            <div id="output">
+                <span class="placeholder"
+                    >Enter a secret and adjust the parameters to see the
+                    parts</span
+                >
+            </div>
+
+            <h2>References</h2>
+            <p>
+                Inspired by:
+                <a
+                    href="https://iancoleman.io/shamir/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >https://iancoleman.io/shamir/</a
+                >
+            </p>
+            <p>
+                <a
+                    href="https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Shamir Secret Sharing Wikipedia</a
+                >
+            </p>
+            <p>
+                <a
+                    href="https://github.com/RaffaeleCanale/wx-ssss"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Source code</a
+                >
+            </p>
+            <p>
+                <a
+                    href="https://github.com/grempe/secrets.js/tree/master"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >secrets.js library</a
+                >
+            </p>
+        </main>
+        <script>
+            function validate(total, required, secret) {
+                if (total < 2) {
+                    return "Total must be at least 1";
+                } else if (total > 255) {
+                    return "Total must be at most 255";
+                } else if (required < 2) {
+                    return "Required must be at least 1";
+                } else if (required > 255) {
+                    return "Required must be at most 255";
+                } else if (isNaN(total)) {
+                    return "Invalid value for total";
+                } else if (isNaN(required)) {
+                    return "Invalid value for required";
+                } else if (required > total) {
+                    return "Required must be less than total";
+                } else if (secret.length == 0) {
+                    return "Secret is blank";
+                } else {
+                    return undefined;
+                }
+            }
+
+            function updateParts() {
+                const threshold = Number(
+                    document.getElementById("requiredParts").value
+                );
+                const numShares = Number(
+                    document.getElementById("totalParts").value
+                );
+                const secret = document.getElementById("secret").value;
+                const output = document.getElementById("output");
+
+                const error = validate(numShares, threshold, secret);
+
+                if (error !== undefined) {
+                    output.innerHTML = `<span class="placeholder error">${error}</span>`;
+                    return;
+                }
+
+                const padLength = 1024;
+                const shares = secrets.share(
+                    secrets.str2hex(secret),
+                    numShares,
+                    threshold,
+                    padLength
+                );
+
+                const fields = [];
+                for (const [index, share] of shares.entries()) {
+                    const downloadUrl = createDownloadContent(share, index);
+                    fields.push(`<li>
+                        <div class="share-container">
+                            <span id="share_${index}" class="share">${share}</span>
+                            <button onclick="copyToClipboard('share_${index}')">
+                                ${ccIcon}
+                            </button>
+                            <a href="${downloadUrl}" download="part_${
+                        index + 1
+                    }.html">Download</a>
+                        </div>
+                    </li>`);
+                }
+                output.innerHTML = `
+                    <ol>
+                        ${fields.join("\n")}
+                    </ol>
+                `;
+            }
+
+            function createDownloadContent(share, shareIndex) {
+                const threshold =
+                    document.getElementById("requiredParts").value;
+                const customHeader =
+                    document.getElementById("customHeader").value;
+                const content = template
+                    .replaceAll("__SELF_PART__", share)
+                    .replaceAll("__THRESHOLD__", threshold)
+                    .replaceAll("__SELF_PART_NUMBER__", shareIndex + 1)
+                    .replaceAll("__CUSTOM_HEADER__", customHeader);
+                const blob = new Blob([content], { type: "text/html" });
+                return URL.createObjectURL(blob);
+            }
+
+            function copyToClipboard(elementId) {
+                const element = document.getElementById(elementId);
+                navigator.clipboard.writeText(element.innerText);
+
+                element.style.backgroundColor = "#d4edda";
+                setTimeout(() => {
+                    element.style.backgroundColor = "#f4f4f4";
+                }, 300);
+            }
+        </script>
+
+        <!-- secrets.js -->
+        <script>
+            // prettier-ignore
+            const template64 = "PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KICAgIDxoZWFkPgogICAgICAgIDxtZXRhIGNoYXJzZXQ9IlVURi04IiAvPgogICAgICAgIDxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsIGluaXRpYWwtc2NhbGU9MS4wIiAvPgogICAgICAgIDxtZXRhIGh0dHAtZXF1aXY9IlgtVUEtQ29tcGF0aWJsZSIgY29udGVudD0iaWU9ZWRnZSIgLz4KICAgICAgICA8dGl0bGU+UGFydCBfX1NFTEZfUEFSVF9OVU1CRVJfXzwvdGl0bGU+CiAgICAgICAgPHN0eWxlPgogICAgICAgICAgICBtYWluIHsKICAgICAgICAgICAgICAgIG1heC13aWR0aDogODAwcHg7CiAgICAgICAgICAgICAgICBtYXJnaW46IGF1dG87CiAgICAgICAgICAgICAgICBmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIDpmb2N1cyB7CiAgICAgICAgICAgICAgICBvdXRsaW5lLWNvbG9yOiAjNGE5MGUyOwogICAgICAgICAgICAgICAgb3V0bGluZS13aWR0aDogMnB4OwogICAgICAgICAgICAgICAgb3V0bGluZS1zdHlsZTogc29saWQ7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGlucHV0IHsKICAgICAgICAgICAgICAgIHdpZHRoOiAxMDAlOwogICAgICAgICAgICAgICAgcGFkZGluZzogMC41cmVtOwogICAgICAgICAgICAgICAgYm9yZGVyLXJhZGl1czogMTBweDsKICAgICAgICAgICAgICAgIGJvcmRlcjogMXB4IHNvbGlkICNjY2M7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGJ1dHRvbiB7CiAgICAgICAgICAgICAgICBwYWRkaW5nOiAwLjVyZW0gMC41cmVtOwogICAgICAgICAgICAgICAgYm9yZGVyLXJhZGl1czogNXB4OwogICAgICAgICAgICAgICAgYm9yZGVyOiAxcHggc29saWQgI2NjYzsKICAgICAgICAgICAgICAgIGN1cnNvcjogcG9pbnRlcjsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgLnNoYXJlLWNvbnRhaW5lciB7CiAgICAgICAgICAgICAgICBkaXNwbGF5OiBmbGV4OwogICAgICAgICAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjsKICAgICAgICAgICAgICAgIGdhcDogMXJlbTsKICAgICAgICAgICAgICAgIG1hcmdpbi1ib3R0b206IDAuNXJlbTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgLnNoYXJlIHsKICAgICAgICAgICAgICAgIGZvbnQtZmFtaWx5OiBtb25vc3BhY2U7CiAgICAgICAgICAgICAgICBmb250LXNpemU6IDAuOXJlbTsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQtY29sb3I6ICNmNGY0ZjQ7CiAgICAgICAgICAgICAgICB0cmFuc2l0aW9uOiBiYWNrZ3JvdW5kLWNvbG9yIDAuM3MgZWFzZS1vdXQ7CiAgICAgICAgICAgICAgICBwYWRkaW5nOiAxcmVtIDAuNXJlbTsKICAgICAgICAgICAgICAgIGJvcmRlci1yYWRpdXM6IDVweDsKICAgICAgICAgICAgICAgIGRpc3BsYXk6IGlubGluZS1ibG9jazsKICAgICAgICAgICAgICAgIGZsZXgtZ3JvdzogMTsKICAgICAgICAgICAgICAgIG92ZXJmbG93LXg6IGhpZGRlbjsKICAgICAgICAgICAgICAgIHRleHQtb3ZlcmZsb3c6IGVsbGlwc2lzOwogICAgICAgICAgICB9CgogICAgICAgICAgICAjb3V0cHV0IC5wbGFjZWhvbGRlciB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjZjlmOWY5OwogICAgICAgICAgICAgICAgcGFkZGluZzogMXJlbTsKICAgICAgICAgICAgICAgIGJvcmRlci1yYWRpdXM6IDVweDsKICAgICAgICAgICAgICAgIGJvcmRlcjogMXB4IGRhc2hlZCAjY2NjOwogICAgICAgICAgICAgICAgZm9udC1zaXplOiAwLjlyZW07CiAgICAgICAgICAgICAgICBmb250LXN0eWxlOiBpdGFsaWM7CiAgICAgICAgICAgICAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7CiAgICAgICAgICAgICAgICB3aWR0aDogMTAwJTsKICAgICAgICAgICAgICAgIHRleHQtYWxpZ246IGNlbnRlcjsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgI291dHB1dCAucGxhY2Vob2xkZXIuc2VjcmV0IHsKICAgICAgICAgICAgICAgIGZvbnQtc3R5bGU6IG5vcm1hbDsKICAgICAgICAgICAgICAgIHRleHQtYWxpZ246IGluaXRpYWw7CiAgICAgICAgICAgICAgICB3aGl0ZS1zcGFjZTogcHJlLXdyYXA7CiAgICAgICAgICAgIH0KICAgICAgICA8L3N0eWxlPgogICAgPC9oZWFkPgogICAgPGJvZHk+CiAgICAgICAgPG1haW4+CiAgICAgICAgICAgIF9fQ1VTVE9NX0hFQURFUl9fCgogICAgICAgICAgICA8aDI+VGhpcyBpcyBwYXJ0IF9fU0VMRl9QQVJUX05VTUJFUl9fPC9oMj4KICAgICAgICAgICAgPGRpdiBjbGFzcz0ic2hhcmUtY29udGFpbmVyIj4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3M9InNoYXJlIiBpZD0ic2VsZi1wYXJ0Ij5fX1NFTEZfUEFSVF9fPC9kaXY+CiAgICAgICAgICAgICAgICA8YnV0dG9uIG9uY2xpY2s9ImNvcHlUb0NsaXBib2FyZCgnc2VsZi1wYXJ0JykiPgogICAgICAgICAgICAgICAgICAgIDxzdmcKICAgICAgICAgICAgICAgICAgICAgICAgaGVpZ2h0PSIxcmVtIgogICAgICAgICAgICAgICAgICAgICAgICB3aWR0aD0iMXJlbSIKICAgICAgICAgICAgICAgICAgICAgICAgY2xpcC1ydWxlPSJldmVub2RkIgogICAgICAgICAgICAgICAgICAgICAgICBmaWxsLXJ1bGU9ImV2ZW5vZGQiCiAgICAgICAgICAgICAgICAgICAgICAgIHN0cm9rZS1saW5lam9pbj0icm91bmQiCiAgICAgICAgICAgICAgICAgICAgICAgIHN0cm9rZS1taXRlcmxpbWl0PSIyIgogICAgICAgICAgICAgICAgICAgICAgICB2aWV3Qm94PSIwIDAgMjQgMjQiCiAgICAgICAgICAgICAgICAgICAgICAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoCiAgICAgICAgICAgICAgICAgICAgICAgICAgICBkPSJtNiAxOXYyYzAgLjYyMS41MiAxIDEgMWgydi0xLjVoLTEuNXYtMS41em03LjUgM2gtMy41di0xLjVoMy41em00LjUgMGgtMy41di0xLjVoMy41em00LTNoLTEuNXYxLjVoLTEuNXYxLjVoMmMuNDc4IDAgMS0uMzc5IDEtMXptLTEuNS0xdi0zLjM2M2gxLjV2My4zNjN6bTAtNC4zNjN2LTMuNjM3aDEuNXYzLjYzN3ptLTEzLTMuNjM3djMuNjM3aC0xLjV2LTMuNjM3em0xMS41LTR2MS41aDEuNXYxLjVoMS41di0yYzAtLjQ3OC0uMzc5LTEtMS0xem0tMTAgMGgtMmMtLjYyIDAtMSAuNTE5LTEgMXYyaDEuNXYtMS41aDEuNXptNC41IDEuNWgtMy41di0xLjVoMy41em0zLTEuNXYtMi41aC0xM3YxM2gyLjV2LTEuODYzaDEuNXYzLjM2M2gtNC41Yy0uNDggMC0xLS4zNzktMS0xdi0xNGMwLS40ODEuMzgtMSAxLTFoMTRjLjYyMSAwIDEgLjUyMiAxIDF2NC41aC0zLjV2LTEuNXoiCiAgICAgICAgICAgICAgICAgICAgICAgICAgICBmaWxsLXJ1bGU9Im5vbnplcm8iCiAgICAgICAgICAgICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgICAgICAgPC9zdmc+CiAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgPC9kaXY+CgogICAgICAgICAgICA8aDI+QWRkaXRpb25hbCBwYXJ0czwvaDI+CiAgICAgICAgICAgIDxwPgogICAgICAgICAgICAgICAgUmVxdWlyZXMgYXQgbGVhc3QgX19USFJFU0hPTERfXyBwYXJ0cyB0byByZWNvbnN0cnVjdCB0aGUgc2VjcmV0CiAgICAgICAgICAgIDwvcD4KCiAgICAgICAgICAgIDxkaXYgaWQ9ImlucHV0cyI+PC9kaXY+CiAgICAgICAgICAgIDxoMj5SZWNvbnN0cnVjdGVkIHNlY3JldDwvaDI+CiAgICAgICAgICAgIDxkaXYgaWQ9Im91dHB1dCI+PC9kaXY+CiAgICAgICAgPC9tYWluPgogICAgICAgIDxzY3JpcHQ+CiAgICAgICAgICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoIkRPTUNvbnRlbnRMb2FkZWQiLCAoKSA9PiB7CiAgICAgICAgICAgICAgICB1cGRhdGVJbnB1dHMoKTsKICAgICAgICAgICAgfSk7CgogICAgICAgICAgICBjb25zdCB0aHJlc2hvbGQgPSBfX1RIUkVTSE9MRF9fOwoKICAgICAgICAgICAgZnVuY3Rpb24gdXBkYXRlSW5wdXRzKCkgewogICAgICAgICAgICAgICAgY29uc3QgaW5wdXRzID0gW107CiAgICAgICAgICAgICAgICBmb3IgKGxldCBpID0gMTsgaSA8IHRocmVzaG9sZDsgaSsrKSB7CiAgICAgICAgICAgICAgICAgICAgaW5wdXRzLnB1c2goCiAgICAgICAgICAgICAgICAgICAgICAgIGA8ZGl2IGNsYXNzPSJzaGFyZS1jb250YWluZXIiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgPGxhYmVsPlBhcnQ6PC9sYWJlbD4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCB0eXBlPSJ0ZXh0IiBpZD0icGFydCR7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaSArIDEKICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0iIG9uaW5wdXQ9ImNvbWJpbmUoKSIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+YAogICAgICAgICAgICAgICAgICAgICk7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiaW5wdXRzIikuaW5uZXJIVE1MID0gaW5wdXRzLmpvaW4oIiIpOwogICAgICAgICAgICB9CgogICAgICAgICAgICBmdW5jdGlvbiBjb21iaW5lKCkgewogICAgICAgICAgICAgICAgY29uc3Qgb3V0cHV0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoIm91dHB1dCIpOwoKICAgICAgICAgICAgICAgIGNvbnN0IHBhcnRzID0gWwogICAgICAgICAgICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJzZWxmLXBhcnQiKS5pbm5lclRleHQudHJpbSgpLAogICAgICAgICAgICAgICAgXTsKICAgICAgICAgICAgICAgIGZvciAobGV0IGkgPSAxOyBpIDwgdGhyZXNob2xkOyBpKyspIHsKICAgICAgICAgICAgICAgICAgICBjb25zdCBwYXJ0VmFsdWUgPSBkb2N1bWVudAogICAgICAgICAgICAgICAgICAgICAgICAuZ2V0RWxlbWVudEJ5SWQoYHBhcnQke2kgKyAxfWApCiAgICAgICAgICAgICAgICAgICAgICAgIC52YWx1ZS50cmltKCk7CiAgICAgICAgICAgICAgICAgICAgaWYgKHBhcnRWYWx1ZSkgewogICAgICAgICAgICAgICAgICAgICAgICBwYXJ0cy5wdXNoKHBhcnRWYWx1ZSk7CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIGlmIChwYXJ0cy5sZW5ndGggPCB0aHJlc2hvbGQpIHsKICAgICAgICAgICAgICAgICAgICBvdXRwdXQuaW5uZXJIVE1MID0gYDxzcGFuIGNsYXNzPSJwbGFjZWhvbGRlciI+CiAgICAgICAgICAgICAgICAgICAgUGxlYXNlIHByb3ZpZGUgYXQgbGVhc3QgJHt0aHJlc2hvbGR9IHBhcnRzIHRvIHJlY29uc3RydWN0IHRoZSBzZWNyZXQuCiAgICAgICAgICAgICAgICAgICAgPC9zcGFuPmA7CiAgICAgICAgICAgICAgICAgICAgcmV0dXJuOwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgdHJ5IHsKICAgICAgICAgICAgICAgICAgICBjb25zdCBzZWNyZXRIZXggPSBzZWNyZXRzLmNvbWJpbmUocGFydHMpOwogICAgICAgICAgICAgICAgICAgIGNvbnN0IHNlY3JldCA9IHNlY3JldHMuaGV4MnN0cihzZWNyZXRIZXgpOwogICAgICAgICAgICAgICAgICAgIG91dHB1dC5pbm5lckhUTUwgPSBgPHNwYW4gY2xhc3M9InBsYWNlaG9sZGVyIHNlY3JldCI+JHtzZWNyZXR9PC9zcGFuPmA7CiAgICAgICAgICAgICAgICB9IGNhdGNoIChlcnJvcikgewogICAgICAgICAgICAgICAgICAgIG91dHB1dC5pbm5lckhUTUwgPSBgPHNwYW4gY2xhc3M9InBsYWNlaG9sZGVyIj4ke2Vycm9yLm1lc3NhZ2V9PC9zcGFuPmA7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGZ1bmN0aW9uIGNvcHlUb0NsaXBib2FyZChlbGVtZW50SWQpIHsKICAgICAgICAgICAgICAgIGNvbnN0IGVsZW1lbnQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChlbGVtZW50SWQpOwogICAgICAgICAgICAgICAgbmF2aWdhdG9yLmNsaXBib2FyZC53cml0ZVRleHQoZWxlbWVudC5pbm5lclRleHQpOwoKICAgICAgICAgICAgICAgIGVsZW1lbnQuc3R5bGUuYmFja2dyb3VuZENvbG9yID0gIiNkNGVkZGEiOwogICAgICAgICAgICAgICAgc2V0VGltZW91dCgoKSA9PiB7CiAgICAgICAgICAgICAgICAgICAgZWxlbWVudC5zdHlsZS5iYWNrZ3JvdW5kQ29sb3IgPSAiI2Y0ZjRmNCI7CiAgICAgICAgICAgICAgICB9LCAzMDApOwogICAgICAgICAgICB9CiAgICAgICAgPC9zY3JpcHQ+CgogICAgICAgIDwhLS0gc2VjcmV0cy5qcyAtLT4KICAgICAgICA8c2NyaXB0PgogICAgICAgICAgICAvLyBwcmV0dGllci1pZ25vcmUKICAgICAgICAgICAgIWZ1bmN0aW9uKHQsZSl7InVzZSBzdHJpY3QiOyJmdW5jdGlvbiI9PXR5cGVvZiBkZWZpbmUmJmRlZmluZS5hbWQ/ZGVmaW5lKFtdLGZ1bmN0aW9uKCl7cmV0dXJuIHQuc2VjcmV0cz1lKCl9KToib2JqZWN0Ij09dHlwZW9mIGV4cG9ydHM/bW9kdWxlLmV4cG9ydHM9ZShyZXF1aXJlKCJjcnlwdG8iKSk6dC5zZWNyZXRzPWUodC5jcnlwdG8pfSh0aGlzLGZ1bmN0aW9uKG4peyJ1c2Ugc3RyaWN0Ijt2YXIgdSxiLGksYSxzO2Z1bmN0aW9uIGgoKXt1PXtiaXRzOjgscmFkaXg6MTYsbWluQml0czozLG1heEJpdHM6MjAsYnl0ZXNQZXJDaGFyOjIsbWF4Qnl0ZXNQZXJDaGFyOjYscHJpbWl0aXZlUG9seW5vbWlhbHM6W251bGwsbnVsbCwxLDMsMyw1LDMsMywyOSwxNyw5LDUsODMsMjcsNDMsMyw0NSw5LDM5LDM5LDksNSwzLDMzLDI3LDksNzEsMzksOSw1LDgzXX0sYj17fSxpPW5ldyBBcnJheSgxMDI0KS5qb2luKCIwIiksYT0hMCxzPVsibm9kZUNyeXB0b1JhbmRvbUJ5dGVzIiwiYnJvd3NlckNyeXB0b0dldFJhbmRvbVZhbHVlcyIsInRlc3RSYW5kb20iXX1mdW5jdGlvbiBmKCl7cmV0dXJuISghYnx8IWIucm5nfHwiZnVuY3Rpb24iIT10eXBlb2YgYi5ybmcpfWZ1bmN0aW9uIGcodCxlKXt2YXIgcjtpZigwPT09ZXx8MT09PWUpcmV0dXJuIHQ7aWYoZSYmMTAyNDxlKXRocm93IG5ldyBFcnJvcigiUGFkZGluZyBtdXN0IGJlIG11bHRpcGxlcyBvZiBubyBsYXJnZXIgdGhhbiAxMDI0IGJpdHMuIik7cmV0dXJuIGU9ZXx8Yi5iaXRzLHQmJihyPXQubGVuZ3RoJWUpLHI/KGkrdCkuc2xpY2UoLShlLXIrdC5sZW5ndGgpKTp0fWZ1bmN0aW9uIGModCl7dmFyIGUscixuPSIiO2ZvcihyPXQubGVuZ3RoLTE7MDw9cjtyLS0pe2lmKGU9cGFyc2VJbnQodFtyXSwxNiksaXNOYU4oZSkpdGhyb3cgbmV3IEVycm9yKCJJbnZhbGlkIGhleCBjaGFyYWN0ZXIuIik7bj1nKGUudG9TdHJpbmcoMiksNCkrbn1yZXR1cm4gbn1mdW5jdGlvbiBtKHQpe3ZhciBlLHIsbj0iIjtmb3Iocj0odD1nKHQsNCkpLmxlbmd0aDs0PD1yO3ItPTQpe2lmKGU9cGFyc2VJbnQodC5zbGljZShyLTQsciksMiksaXNOYU4oZSkpdGhyb3cgbmV3IEVycm9yKCJJbnZhbGlkIGJpbmFyeSBjaGFyYWN0ZXIuIik7bj1lLnRvU3RyaW5nKDE2KStufXJldHVybiBufWZ1bmN0aW9uIG8oKXtyZXR1cm4hKCFufHwib2JqZWN0IiE9dHlwZW9mIG58fCJmdW5jdGlvbiIhPXR5cGVvZiBuLmdldFJhbmRvbVZhbHVlcyYmIm9iamVjdCIhPXR5cGVvZiBuLmdldFJhbmRvbVZhbHVlc3x8ImZ1bmN0aW9uIiE9dHlwZW9mIFVpbnQzMkFycmF5JiYib2JqZWN0IiE9dHlwZW9mIFVpbnQzMkFycmF5KX1mdW5jdGlvbiBsKCl7cmV0dXJuIm9iamVjdCI9PXR5cGVvZiBuJiYiZnVuY3Rpb24iPT10eXBlb2Ygbi5yYW5kb21CeXRlc31mdW5jdGlvbiBwKHQpe2Z1bmN0aW9uIGEodCxlLHIsbil7dmFyIGksYT0wLG89IiI7Zm9yKGUmJihpPWUubGVuZ3RoLTEpO2E8aXx8by5sZW5ndGg8dDspbys9ZyhNYXRoLmFicyhwYXJzZUludChlW2FdLHIpKS50b1N0cmluZygyKSxuKSxhKys7cmV0dXJuKChvPW8uc3Vic3RyKC10KSkubWF0Y2goLzAvZyl8fFtdKS5sZW5ndGg9PT1vLmxlbmd0aD9udWxsOm99ZnVuY3Rpb24gZSh0KXt2YXIgZSxyPW51bGw7Zm9yKDE2LDQsZT1NYXRoLmNlaWwodC84KTtudWxsPT09cjspcj1hKHQsbi5yYW5kb21CeXRlcyhlKS50b1N0cmluZygiaGV4IiksMTYsNCk7cmV0dXJuIHJ9ZnVuY3Rpb24gcih0KXt2YXIgZSxyPW51bGw7Zm9yKDEwLDMyLGU9TWF0aC5jZWlsKHQvMzIpO251bGw9PT1yOylyPWEodCxuLmdldFJhbmRvbVZhbHVlcyhuZXcgVWludDMyQXJyYXkoZSkpLDEwLDMyKTtyZXR1cm4gcn1yZXR1cm4gdCYmInRlc3RSYW5kb20iPT09dD8oYi50eXBlQ1NQUk5HPXQsZnVuY3Rpb24odCl7dmFyIGUscixuPW51bGw7cj1NYXRoLmNlaWwodC8zMiksZT1uZXcgVWludDMyQXJyYXkocik7Zm9yKHZhciBpPTA7aTxlLmxlbmd0aDtpKyspZVtpXT0xMjM0NTY3ODk7Zm9yKDtudWxsPT09bjspbj1hKHQsZSwxMCwzMik7cmV0dXJuIG59KTp0JiYibm9kZUNyeXB0b1JhbmRvbUJ5dGVzIj09PXQ/KGIudHlwZUNTUFJORz10LGUpOnQmJiJicm93c2VyQ3J5cHRvR2V0UmFuZG9tVmFsdWVzIj09PXQ/KGIudHlwZUNTUFJORz10LHIpOmwoKT8oYi50eXBlQ1NQUk5HPSJub2RlQ3J5cHRvUmFuZG9tQnl0ZXMiLGUpOm8oKT8oYi50eXBlQ1NQUk5HPSJicm93c2VyQ3J5cHRvR2V0UmFuZG9tVmFsdWVzIixyKTp2b2lkIDB9ZnVuY3Rpb24gZCh0LGUpe3ZhciByLG49W107Zm9yKGUmJih0PWcodCxlKSkscj10Lmxlbmd0aDtyPmIuYml0cztyLT1iLmJpdHMpbi5wdXNoKHBhcnNlSW50KHQuc2xpY2Uoci1iLmJpdHMsciksMikpO3JldHVybiBuLnB1c2gocGFyc2VJbnQodC5zbGljZSgwLHIpLDIpKSxufWZ1bmN0aW9uIHcodCxlKXt2YXIgcixuPWIubG9nc1t0XSxpPTA7Zm9yKHI9ZS5sZW5ndGgtMTswPD1yO3ItLSlpPTAhPT1pP2IuZXhwc1sobitiLmxvZ3NbaV0pJWIubWF4U2hhcmVzXV5lW3JdOmVbcl07cmV0dXJuIGl9ZnVuY3Rpb24geSh0LGUscil7dmFyIG4saSxhLG8scz0wO2ZvcihhPTAsbj1lLmxlbmd0aDthPG47YSsrKWlmKHJbYV0pe2ZvcihpPWIubG9nc1tyW2FdXSxvPTA7bzxuO28rKylpZihhIT09byl7aWYodD09PWVbb10pe2k9LTE7YnJlYWt9aT0oaStiLmxvZ3NbdF5lW29dXS1iLmxvZ3NbZVthXV5lW29dXStiLm1heFNoYXJlcyklYi5tYXhTaGFyZXN9cz0tMT09PWk/czpzXmIuZXhwc1tpXX1yZXR1cm4gc31mdW5jdGlvbiB4KHQsZSxyKXt2YXIgbixpLGE9W10sbz1bdF07Zm9yKG49MTtuPHI7bisrKW9bbl09cGFyc2VJbnQoYi5ybmcoYi5iaXRzKSwyKTtmb3IoaT1lKyhuPTEpO248aTtuKyspYVtuLTFdPXt4Om4seTp3KG4sbyl9O3JldHVybiBhfWZ1bmN0aW9uIHYodCxlLHIpe3ZhciBuLGksYSxvO2lmKGU9cGFyc2VJbnQoZSxiLnJhZGl4KSxuPSh0PXBhcnNlSW50KHQsMTApfHxiLmJpdHMpLnRvU3RyaW5nKDM2KS50b1VwcGVyQ2FzZSgpLG89KGE9TWF0aC5wb3coMix0KS0xKS50b1N0cmluZyhiLnJhZGl4KS5sZW5ndGgsaT1nKGUudG9TdHJpbmcoYi5yYWRpeCksbyksIm51bWJlciIhPXR5cGVvZiBlfHxlJTEhPTB8fGU8MXx8YTxlKXRocm93IG5ldyBFcnJvcigiU2hhcmUgaWQgbXVzdCBiZSBhbiBpbnRlZ2VyIGJldHdlZW4gMSBhbmQgIithKyIsIGluY2x1c2l2ZS4iKTtyZXR1cm4gbitpK3J9dmFyIHQ9e2luaXQ6ZnVuY3Rpb24odCxlKXt2YXIgcixuLGk9W10sYT1bXSxvPTE7aWYoaCgpLHQmJigibnVtYmVyIiE9dHlwZW9mIHR8fHQlMSE9MHx8dDx1Lm1pbkJpdHN8fHQ+dS5tYXhCaXRzKSl0aHJvdyBuZXcgRXJyb3IoIk51bWJlciBvZiBiaXRzIG11c3QgYmUgYW4gaW50ZWdlciBiZXR3ZWVuICIrdS5taW5CaXRzKyIgYW5kICIrdS5tYXhCaXRzKyIsIGluY2x1c2l2ZS4iKTtpZihlJiYtMT09PXMuaW5kZXhPZihlKSl0aHJvdyBuZXcgRXJyb3IoIkludmFsaWQgUk5HIHR5cGUgYXJndW1lbnQgOiAnIitlKyInIik7Zm9yKGIucmFkaXg9dS5yYWRpeCxiLmJpdHM9dHx8dS5iaXRzLGIuc2l6ZT1NYXRoLnBvdygyLGIuYml0cyksYi5tYXhTaGFyZXM9Yi5zaXplLTEscj11LnByaW1pdGl2ZVBvbHlub21pYWxzW2IuYml0c10sbj0wO248Yi5zaXplO24rKylpW2Fbbl09b109biwobzw8PTEpPj1iLnNpemUmJihvXj1yLG8mPWIubWF4U2hhcmVzKTtpZihiLmxvZ3M9aSxiLmV4cHM9YSxlJiZ0aGlzLnNldFJORyhlKSxmKCl8fHRoaXMuc2V0Uk5HKCksIShmKCkmJmIuYml0cyYmYi5zaXplJiZiLm1heFNoYXJlcyYmYi5sb2dzJiZiLmV4cHMmJmIubG9ncy5sZW5ndGg9PT1iLnNpemUmJmIuZXhwcy5sZW5ndGg9PT1iLnNpemUpKXRocm93IG5ldyBFcnJvcigiSW5pdGlhbGl6YXRpb24gZmFpbGVkLiIpfSxjb21iaW5lOmZ1bmN0aW9uKHQsZSl7dmFyIHIsbixpLGEsbyxzLGgsdT0iIixmPVtdLGw9W107Zm9yKGU9ZXx8MCxyPTAsaT10Lmxlbmd0aDtyPGk7cisrKXtpZihzPXRoaXMuZXh0cmFjdFNoYXJlQ29tcG9uZW50cyh0W3JdKSx2b2lkIDA9PT1vKW89cy5iaXRzO2Vsc2UgaWYocy5iaXRzIT09byl0aHJvdyBuZXcgRXJyb3IoIk1pc21hdGNoZWQgc2hhcmVzOiBEaWZmZXJlbnQgYml0IHNldHRpbmdzLiIpO2lmKGIuYml0cyE9PW8mJnRoaXMuaW5pdChvKSwtMT09PWYuaW5kZXhPZihzLmlkKSlmb3IoZi5wdXNoKHMuaWQpLG49MCxhPShoPWQoYyhzLmRhdGEpKSkubGVuZ3RoO248YTtuKyspbFtuXT1sW25dfHxbXSxsW25dW2YubGVuZ3RoLTFdPWhbbl19Zm9yKHI9MCxpPWwubGVuZ3RoO3I8aTtyKyspdT1nKHkoZSxmLGxbcl0pLnRvU3RyaW5nKDIpKSt1O3JldHVybiBtKDE8PWU/dTp1LnNsaWNlKHUuaW5kZXhPZigiMSIpKzEpKX0sZ2V0Q29uZmlnOmZ1bmN0aW9uKCl7dmFyIHQ9e307cmV0dXJuIHQucmFkaXg9Yi5yYWRpeCx0LmJpdHM9Yi5iaXRzLHQubWF4U2hhcmVzPWIubWF4U2hhcmVzLHQuaGFzQ1NQUk5HPWYoKSx0LnR5cGVDU1BSTkc9Yi50eXBlQ1NQUk5HLHR9LGV4dHJhY3RTaGFyZUNvbXBvbmVudHM6ZnVuY3Rpb24odCl7dmFyIGUscixuLGksYSxvPXt9O2lmKChlPXBhcnNlSW50KHQuc3Vic3RyKDAsMSksMzYpKSYmKCJudW1iZXIiIT10eXBlb2YgZXx8ZSUxIT0wfHxlPHUubWluQml0c3x8ZT51Lm1heEJpdHMpKXRocm93IG5ldyBFcnJvcigiSW52YWxpZCBzaGFyZSA6IE51bWJlciBvZiBiaXRzIG11c3QgYmUgYW4gaW50ZWdlciBiZXR3ZWVuICIrdS5taW5CaXRzKyIgYW5kICIrdS5tYXhCaXRzKyIsIGluY2x1c2l2ZS4iKTtpZihpPU1hdGgucG93KDIsZSktMSxuPShNYXRoLnBvdygyLGUpLTEpLnRvU3RyaW5nKGIucmFkaXgpLmxlbmd0aCwoYT1uZXcgUmVnRXhwKCJeKFthLWtBLUszLTldezF9KShbYS1mQS1GMC05XXsiK24rIn0pKFthLWZBLUYwLTldKykkIikuZXhlYyh0KSkmJihyPXBhcnNlSW50KGFbMl0sYi5yYWRpeCkpLCJudW1iZXIiIT10eXBlb2Ygcnx8ciUxIT0wfHxyPDF8fGk8cil0aHJvdyBuZXcgRXJyb3IoIkludmFsaWQgc2hhcmUgOiBTaGFyZSBpZCBtdXN0IGJlIGFuIGludGVnZXIgYmV0d2VlbiAxIGFuZCAiK2IubWF4U2hhcmVzKyIsIGluY2x1c2l2ZS4iKTtpZihhJiZhWzNdKXJldHVybiBvLmJpdHM9ZSxvLmlkPXIsby5kYXRhPWFbM10sbzt0aHJvdyBuZXcgRXJyb3IoIlRoZSBzaGFyZSBkYXRhIHByb3ZpZGVkIGlzIGludmFsaWQgOiAiK3QpfSxzZXRSTkc6ZnVuY3Rpb24odCl7dmFyIGU9IlJhbmRvbSBudW1iZXIgZ2VuZXJhdG9yIGlzIGludmFsaWQgIixyPSIgU3VwcGx5IGFuIENTUFJORyBvZiB0aGUgZm9ybSBmdW5jdGlvbihiaXRzKXt9IHRoYXQgcmV0dXJucyBhIHN0cmluZyBjb250YWluaW5nICdiaXRzJyBudW1iZXIgb2YgcmFuZG9tIDEncyBhbmQgMCdzLiI7aWYodCYmInN0cmluZyI9PXR5cGVvZiB0JiYtMT09PXMuaW5kZXhPZih0KSl0aHJvdyBuZXcgRXJyb3IoIkludmFsaWQgUk5HIHR5cGUgYXJndW1lbnQgOiAnIit0KyInIik7aWYoKHQ9dHx8cCgpKSYmInN0cmluZyI9PXR5cGVvZiB0JiYodD1wKHQpKSxhKXtpZih0JiYiZnVuY3Rpb24iIT10eXBlb2YgdCl0aHJvdyBuZXcgRXJyb3IoZSsiKE5vdCBhIGZ1bmN0aW9uKS4iK3IpO2lmKHQmJiJzdHJpbmciIT10eXBlb2YgdChiLmJpdHMpKXRocm93IG5ldyBFcnJvcihlKyIoT3V0cHV0IGlzIG5vdCBhIHN0cmluZykuIityKTtpZih0JiYhcGFyc2VJbnQodChiLmJpdHMpLDIpKXRocm93IG5ldyBFcnJvcihlKyIoQmluYXJ5IHN0cmluZyBvdXRwdXQgbm90IHBhcnNlYWJsZSB0byBhbiBJbnRlZ2VyKS4iK3IpO2lmKHQmJnQoYi5iaXRzKS5sZW5ndGg+Yi5iaXRzKXRocm93IG5ldyBFcnJvcihlKyIoT3V0cHV0IGxlbmd0aCBpcyBncmVhdGVyIHRoYW4gY29uZmlnLmJpdHMpLiIrcik7aWYodCYmdChiLmJpdHMpLmxlbmd0aDxiLmJpdHMpdGhyb3cgbmV3IEVycm9yKGUrIihPdXRwdXQgbGVuZ3RoIGlzIGxlc3MgdGhhbiBjb25maWcuYml0cykuIityKX1yZXR1cm4gYi5ybmc9dCwhMH0sc3RyMmhleDpmdW5jdGlvbih0LGUpe3ZhciByLG4saSxhLG8scyxoPSIiO2lmKCJzdHJpbmciIT10eXBlb2YgdCl0aHJvdyBuZXcgRXJyb3IoIklucHV0IG11c3QgYmUgYSBjaGFyYWN0ZXIgc3RyaW5nLiIpO2lmKCJudW1iZXIiIT10eXBlb2YoZT1lfHx1LmJ5dGVzUGVyQ2hhcil8fGU8MXx8ZT51Lm1heEJ5dGVzUGVyQ2hhcnx8ZSUxIT0wKXRocm93IG5ldyBFcnJvcigiQnl0ZXMgcGVyIGNoYXJhY3RlciBtdXN0IGJlIGFuIGludGVnZXIgYmV0d2VlbiAxIGFuZCAiK3UubWF4Qnl0ZXNQZXJDaGFyKyIsIGluY2x1c2l2ZS4iKTtmb3Iocj0yKmUsbj1NYXRoLnBvdygxNixyKS0xLG89MCxzPXQubGVuZ3RoO288cztvKyspe2lmKGE9dFtvXS5jaGFyQ29kZUF0KCksaXNOYU4oYSkpdGhyb3cgbmV3IEVycm9yKCJJbnZhbGlkIGNoYXJhY3RlcjogIit0W29dKTtpZihuPGEpdGhyb3cgaT1NYXRoLmNlaWwoTWF0aC5sb2coYSsxKS9NYXRoLmxvZygyNTYpKSxuZXcgRXJyb3IoIkludmFsaWQgY2hhcmFjdGVyIGNvZGUgKCIrYSsiKS4gTWF4aW11bSBhbGxvd2FibGUgaXMgMjU2XmJ5dGVzLTEgKCIrbisiKS4gVG8gY29udmVydCB0aGlzIGNoYXJhY3RlciwgdXNlIGF0IGxlYXN0ICIraSsiIGJ5dGVzLiIpO2g9ZyhhLnRvU3RyaW5nKDE2KSxyKStofXJldHVybiBofSxoZXgyc3RyOmZ1bmN0aW9uKHQsZSl7dmFyIHIsbixpLGE9IiI7aWYoInN0cmluZyIhPXR5cGVvZiB0KXRocm93IG5ldyBFcnJvcigiSW5wdXQgbXVzdCBiZSBhIGhleGFkZWNpbWFsIHN0cmluZy4iKTtpZigibnVtYmVyIiE9dHlwZW9mKGU9ZXx8dS5ieXRlc1BlckNoYXIpfHxlJTEhPTB8fGU8MXx8ZT51Lm1heEJ5dGVzUGVyQ2hhcil0aHJvdyBuZXcgRXJyb3IoIkJ5dGVzIHBlciBjaGFyYWN0ZXIgbXVzdCBiZSBhbiBpbnRlZ2VyIGJldHdlZW4gMSBhbmQgIit1Lm1heEJ5dGVzUGVyQ2hhcisiLCBpbmNsdXNpdmUuIik7Zm9yKG49MCxpPSh0PWcodCxyPTIqZSkpLmxlbmd0aDtuPGk7bis9cilhPVN0cmluZy5mcm9tQ2hhckNvZGUocGFyc2VJbnQodC5zbGljZShuLG4rciksMTYpKSthO3JldHVybiBhfSxyYW5kb206ZnVuY3Rpb24odCl7aWYoIm51bWJlciIhPXR5cGVvZiB0fHx0JTEhPTB8fHQ8Mnx8NjU1MzY8dCl0aHJvdyBuZXcgRXJyb3IoIk51bWJlciBvZiBiaXRzIG11c3QgYmUgYW4gSW50ZWdlciBiZXR3ZWVuIDEgYW5kIDY1NTM2LiIpO3JldHVybiBtKGIucm5nKHQpKX0sc2hhcmU6ZnVuY3Rpb24odCxlLHIsbil7dmFyIGksYSxvLHMsaCx1PW5ldyBBcnJheShlKSxmPW5ldyBBcnJheShlKTtpZihuPW58fDEyOCwic3RyaW5nIiE9dHlwZW9mIHQpdGhyb3cgbmV3IEVycm9yKCJTZWNyZXQgbXVzdCBiZSBhIHN0cmluZy4iKTtpZigibnVtYmVyIiE9dHlwZW9mIGV8fGUlMSE9MHx8ZTwyKXRocm93IG5ldyBFcnJvcigiTnVtYmVyIG9mIHNoYXJlcyBtdXN0IGJlIGFuIGludGVnZXIgYmV0d2VlbiAyIGFuZCAyXmJpdHMtMSAoIitiLm1heFNoYXJlcysiKSwgaW5jbHVzaXZlLiIpO2lmKGU+Yi5tYXhTaGFyZXMpdGhyb3cgaT1NYXRoLmNlaWwoTWF0aC5sb2coZSsxKS9NYXRoLkxOMiksbmV3IEVycm9yKCJOdW1iZXIgb2Ygc2hhcmVzIG11c3QgYmUgYW4gaW50ZWdlciBiZXR3ZWVuIDIgYW5kIDJeYml0cy0xICgiK2IubWF4U2hhcmVzKyIpLCBpbmNsdXNpdmUuIFRvIGNyZWF0ZSAiK2UrIiBzaGFyZXMsIHVzZSBhdCBsZWFzdCAiK2krIiBiaXRzLiIpO2lmKCJudW1iZXIiIT10eXBlb2Ygcnx8ciUxIT0wfHxyPDIpdGhyb3cgbmV3IEVycm9yKCJUaHJlc2hvbGQgbnVtYmVyIG9mIHNoYXJlcyBtdXN0IGJlIGFuIGludGVnZXIgYmV0d2VlbiAyIGFuZCAyXmJpdHMtMSAoIitiLm1heFNoYXJlcysiKSwgaW5jbHVzaXZlLiIpO2lmKHI+Yi5tYXhTaGFyZXMpdGhyb3cgaT1NYXRoLmNlaWwoTWF0aC5sb2cocisxKS9NYXRoLkxOMiksbmV3IEVycm9yKCJUaHJlc2hvbGQgbnVtYmVyIG9mIHNoYXJlcyBtdXN0IGJlIGFuIGludGVnZXIgYmV0d2VlbiAyIGFuZCAyXmJpdHMtMSAoIitiLm1heFNoYXJlcysiKSwgaW5jbHVzaXZlLiAgVG8gdXNlIGEgdGhyZXNob2xkIG9mICIrcisiLCB1c2UgYXQgbGVhc3QgIitpKyIgYml0cy4iKTtpZihlPHIpdGhyb3cgbmV3IEVycm9yKCJUaHJlc2hvbGQgbnVtYmVyIG9mIHNoYXJlcyB3YXMgIityKyIgYnV0IG11c3QgYmUgbGVzcyB0aGFuIG9yIGVxdWFsIHRvIHRoZSAiK2UrIiBzaGFyZXMgc3BlY2lmaWVkIGFzIHRoZSB0b3RhbCB0byBnZW5lcmF0ZS4iKTtpZigibnVtYmVyIiE9dHlwZW9mIG58fG4lMSE9MHx8bjwwfHwxMDI0PG4pdGhyb3cgbmV3IEVycm9yKCJaZXJvLXBhZCBsZW5ndGggbXVzdCBiZSBhbiBpbnRlZ2VyIGJldHdlZW4gMCBhbmQgMTAyNCBpbmNsdXNpdmUuIik7Zm9yKG89MCxoPSh0PWQodD0iMSIrYyh0KSxuKSkubGVuZ3RoO288aDtvKyspZm9yKGE9eCh0W29dLGUscikscz0wO3M8ZTtzKyspdVtzXT11W3NdfHxhW3NdLngudG9TdHJpbmcoYi5yYWRpeCksZltzXT1nKGFbc10ueS50b1N0cmluZygyKSkrKGZbc118fCIiKTtmb3Iobz0wO288ZTtvKyspdVtvXT12KGIuYml0cyx1W29dLG0oZltvXSkpO3JldHVybiB1fSxuZXdTaGFyZTpmdW5jdGlvbih0LGUpe3ZhciByO2lmKHQmJiJzdHJpbmciPT10eXBlb2YgdCYmKHQ9cGFyc2VJbnQodCxiLnJhZGl4KSkscj10LnRvU3RyaW5nKGIucmFkaXgpLHQmJnImJmUmJmVbMF0pcmV0dXJuIHYodGhpcy5leHRyYWN0U2hhcmVDb21wb25lbnRzKGVbMF0pLmJpdHMscix0aGlzLmNvbWJpbmUoZSx0KSk7dGhyb3cgbmV3IEVycm9yKCJJbnZhbGlkICdpZCcgb3IgJ3NoYXJlcycgQXJyYXkgYXJndW1lbnQgdG8gbmV3U2hhcmUoKS4iKX0sX3Jlc2V0OmgsX3BhZExlZnQ6ZyxfaGV4MmJpbjpjLF9iaW4yaGV4Om0sX2hhc0NyeXB0b0dldFJhbmRvbVZhbHVlczpvLF9oYXNDcnlwdG9SYW5kb21CeXRlczpsLF9nZXRSTkc6cCxfaXNTZXRSTkc6Zixfc3BsaXROdW1TdHJpbmdUb0ludEFycmF5OmQsX2hvcm5lcjp3LF9sYWdyYW5nZTp5LF9nZXRTaGFyZXM6eCxfY29uc3RydWN0UHVibGljU2hhcmVTdHJpbmc6dn07cmV0dXJuIHQuaW5pdCgpLHR9KTsKICAgICAgICA8L3NjcmlwdD4KICAgIDwvYm9keT4KPC9odG1sPgo=";
+            const template = atob(template64);
+
+            // prettier-ignore
+            const ccIcon = '<svg height="1rem" width="1rem" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m6 19v2c0 .621.52 1 1 1h2v-1.5h-1.5v-1.5zm7.5 3h-3.5v-1.5h3.5zm4.5 0h-3.5v-1.5h3.5zm4-3h-1.5v1.5h-1.5v1.5h2c.478 0 1-.379 1-1zm-1.5-1v-3.363h1.5v3.363zm0-4.363v-3.637h1.5v3.637zm-13-3.637v3.637h-1.5v-3.637zm11.5-4v1.5h1.5v1.5h1.5v-2c0-.478-.379-1-1-1zm-10 0h-2c-.62 0-1 .519-1 1v2h1.5v-1.5h1.5zm4.5 1.5h-3.5v-1.5h3.5zm3-1.5v-2.5h-13v13h2.5v-1.863h1.5v3.363h-4.5c-.48 0-1-.379-1-1v-14c0-.481.38-1 1-1h14c.621 0 1 .522 1 1v4.5h-3.5v-1.5z" fill-rule="nonzero"/></svg>';
+
+            // prettier-ignore
+            !function(t,e){"use strict";"function"==typeof define&&define.amd?define([],function(){return t.secrets=e()}):"object"==typeof exports?module.exports=e(require("crypto")):t.secrets=e(t.crypto)}(this,function(n){"use strict";var u,b,i,a,s;function h(){u={bits:8,radix:16,minBits:3,maxBits:20,bytesPerChar:2,maxBytesPerChar:6,primitivePolynomials:[null,null,1,3,3,5,3,3,29,17,9,5,83,27,43,3,45,9,39,39,9,5,3,33,27,9,71,39,9,5,83]},b={},i=new Array(1024).join("0"),a=!0,s=["nodeCryptoRandomBytes","browserCryptoGetRandomValues","testRandom"]}function f(){return!(!b||!b.rng||"function"!=typeof b.rng)}function g(t,e){var r;if(0===e||1===e)return t;if(e&&1024<e)throw new Error("Padding must be multiples of no larger than 1024 bits.");return e=e||b.bits,t&&(r=t.length%e),r?(i+t).slice(-(e-r+t.length)):t}function c(t){var e,r,n="";for(r=t.length-1;0<=r;r--){if(e=parseInt(t[r],16),isNaN(e))throw new Error("Invalid hex character.");n=g(e.toString(2),4)+n}return n}function m(t){var e,r,n="";for(r=(t=g(t,4)).length;4<=r;r-=4){if(e=parseInt(t.slice(r-4,r),2),isNaN(e))throw new Error("Invalid binary character.");n=e.toString(16)+n}return n}function o(){return!(!n||"object"!=typeof n||"function"!=typeof n.getRandomValues&&"object"!=typeof n.getRandomValues||"function"!=typeof Uint32Array&&"object"!=typeof Uint32Array)}function l(){return"object"==typeof n&&"function"==typeof n.randomBytes}function p(t){function a(t,e,r,n){var i,a=0,o="";for(e&&(i=e.length-1);a<i||o.length<t;)o+=g(Math.abs(parseInt(e[a],r)).toString(2),n),a++;return((o=o.substr(-t)).match(/0/g)||[]).length===o.length?null:o}function e(t){var e,r=null;for(16,4,e=Math.ceil(t/8);null===r;)r=a(t,n.randomBytes(e).toString("hex"),16,4);return r}function r(t){var e,r=null;for(10,32,e=Math.ceil(t/32);null===r;)r=a(t,n.getRandomValues(new Uint32Array(e)),10,32);return r}return t&&"testRandom"===t?(b.typeCSPRNG=t,function(t){var e,r,n=null;r=Math.ceil(t/32),e=new Uint32Array(r);for(var i=0;i<e.length;i++)e[i]=123456789;for(;null===n;)n=a(t,e,10,32);return n}):t&&"nodeCryptoRandomBytes"===t?(b.typeCSPRNG=t,e):t&&"browserCryptoGetRandomValues"===t?(b.typeCSPRNG=t,r):l()?(b.typeCSPRNG="nodeCryptoRandomBytes",e):o()?(b.typeCSPRNG="browserCryptoGetRandomValues",r):void 0}function d(t,e){var r,n=[];for(e&&(t=g(t,e)),r=t.length;r>b.bits;r-=b.bits)n.push(parseInt(t.slice(r-b.bits,r),2));return n.push(parseInt(t.slice(0,r),2)),n}function w(t,e){var r,n=b.logs[t],i=0;for(r=e.length-1;0<=r;r--)i=0!==i?b.exps[(n+b.logs[i])%b.maxShares]^e[r]:e[r];return i}function y(t,e,r){var n,i,a,o,s=0;for(a=0,n=e.length;a<n;a++)if(r[a]){for(i=b.logs[r[a]],o=0;o<n;o++)if(a!==o){if(t===e[o]){i=-1;break}i=(i+b.logs[t^e[o]]-b.logs[e[a]^e[o]]+b.maxShares)%b.maxShares}s=-1===i?s:s^b.exps[i]}return s}function x(t,e,r){var n,i,a=[],o=[t];for(n=1;n<r;n++)o[n]=parseInt(b.rng(b.bits),2);for(i=e+(n=1);n<i;n++)a[n-1]={x:n,y:w(n,o)};return a}function v(t,e,r){var n,i,a,o;if(e=parseInt(e,b.radix),n=(t=parseInt(t,10)||b.bits).toString(36).toUpperCase(),o=(a=Math.pow(2,t)-1).toString(b.radix).length,i=g(e.toString(b.radix),o),"number"!=typeof e||e%1!=0||e<1||a<e)throw new Error("Share id must be an integer between 1 and "+a+", inclusive.");return n+i+r}var t={init:function(t,e){var r,n,i=[],a=[],o=1;if(h(),t&&("number"!=typeof t||t%1!=0||t<u.minBits||t>u.maxBits))throw new Error("Number of bits must be an integer between "+u.minBits+" and "+u.maxBits+", inclusive.");if(e&&-1===s.indexOf(e))throw new Error("Invalid RNG type argument : '"+e+"'");for(b.radix=u.radix,b.bits=t||u.bits,b.size=Math.pow(2,b.bits),b.maxShares=b.size-1,r=u.primitivePolynomials[b.bits],n=0;n<b.size;n++)i[a[n]=o]=n,(o<<=1)>=b.size&&(o^=r,o&=b.maxShares);if(b.logs=i,b.exps=a,e&&this.setRNG(e),f()||this.setRNG(),!(f()&&b.bits&&b.size&&b.maxShares&&b.logs&&b.exps&&b.logs.length===b.size&&b.exps.length===b.size))throw new Error("Initialization failed.")},combine:function(t,e){var r,n,i,a,o,s,h,u="",f=[],l=[];for(e=e||0,r=0,i=t.length;r<i;r++){if(s=this.extractShareComponents(t[r]),void 0===o)o=s.bits;else if(s.bits!==o)throw new Error("Mismatched shares: Different bit settings.");if(b.bits!==o&&this.init(o),-1===f.indexOf(s.id))for(f.push(s.id),n=0,a=(h=d(c(s.data))).length;n<a;n++)l[n]=l[n]||[],l[n][f.length-1]=h[n]}for(r=0,i=l.length;r<i;r++)u=g(y(e,f,l[r]).toString(2))+u;return m(1<=e?u:u.slice(u.indexOf("1")+1))},getConfig:function(){var t={};return t.radix=b.radix,t.bits=b.bits,t.maxShares=b.maxShares,t.hasCSPRNG=f(),t.typeCSPRNG=b.typeCSPRNG,t},extractShareComponents:function(t){var e,r,n,i,a,o={};if((e=parseInt(t.substr(0,1),36))&&("number"!=typeof e||e%1!=0||e<u.minBits||e>u.maxBits))throw new Error("Invalid share : Number of bits must be an integer between "+u.minBits+" and "+u.maxBits+", inclusive.");if(i=Math.pow(2,e)-1,n=(Math.pow(2,e)-1).toString(b.radix).length,(a=new RegExp("^([a-kA-K3-9]{1})([a-fA-F0-9]{"+n+"})([a-fA-F0-9]+)$").exec(t))&&(r=parseInt(a[2],b.radix)),"number"!=typeof r||r%1!=0||r<1||i<r)throw new Error("Invalid share : Share id must be an integer between 1 and "+b.maxShares+", inclusive.");if(a&&a[3])return o.bits=e,o.id=r,o.data=a[3],o;throw new Error("The share data provided is invalid : "+t)},setRNG:function(t){var e="Random number generator is invalid ",r=" Supply an CSPRNG of the form function(bits){} that returns a string containing 'bits' number of random 1's and 0's.";if(t&&"string"==typeof t&&-1===s.indexOf(t))throw new Error("Invalid RNG type argument : '"+t+"'");if((t=t||p())&&"string"==typeof t&&(t=p(t)),a){if(t&&"function"!=typeof t)throw new Error(e+"(Not a function)."+r);if(t&&"string"!=typeof t(b.bits))throw new Error(e+"(Output is not a string)."+r);if(t&&!parseInt(t(b.bits),2))throw new Error(e+"(Binary string output not parseable to an Integer)."+r);if(t&&t(b.bits).length>b.bits)throw new Error(e+"(Output length is greater than config.bits)."+r);if(t&&t(b.bits).length<b.bits)throw new Error(e+"(Output length is less than config.bits)."+r)}return b.rng=t,!0},str2hex:function(t,e){var r,n,i,a,o,s,h="";if("string"!=typeof t)throw new Error("Input must be a character string.");if("number"!=typeof(e=e||u.bytesPerChar)||e<1||e>u.maxBytesPerChar||e%1!=0)throw new Error("Bytes per character must be an integer between 1 and "+u.maxBytesPerChar+", inclusive.");for(r=2*e,n=Math.pow(16,r)-1,o=0,s=t.length;o<s;o++){if(a=t[o].charCodeAt(),isNaN(a))throw new Error("Invalid character: "+t[o]);if(n<a)throw i=Math.ceil(Math.log(a+1)/Math.log(256)),new Error("Invalid character code ("+a+"). Maximum allowable is 256^bytes-1 ("+n+"). To convert this character, use at least "+i+" bytes.");h=g(a.toString(16),r)+h}return h},hex2str:function(t,e){var r,n,i,a="";if("string"!=typeof t)throw new Error("Input must be a hexadecimal string.");if("number"!=typeof(e=e||u.bytesPerChar)||e%1!=0||e<1||e>u.maxBytesPerChar)throw new Error("Bytes per character must be an integer between 1 and "+u.maxBytesPerChar+", inclusive.");for(n=0,i=(t=g(t,r=2*e)).length;n<i;n+=r)a=String.fromCharCode(parseInt(t.slice(n,n+r),16))+a;return a},random:function(t){if("number"!=typeof t||t%1!=0||t<2||65536<t)throw new Error("Number of bits must be an Integer between 1 and 65536.");return m(b.rng(t))},share:function(t,e,r,n){var i,a,o,s,h,u=new Array(e),f=new Array(e);if(n=n||128,"string"!=typeof t)throw new Error("Secret must be a string.");if("number"!=typeof e||e%1!=0||e<2)throw new Error("Number of shares must be an integer between 2 and 2^bits-1 ("+b.maxShares+"), inclusive.");if(e>b.maxShares)throw i=Math.ceil(Math.log(e+1)/Math.LN2),new Error("Number of shares must be an integer between 2 and 2^bits-1 ("+b.maxShares+"), inclusive. To create "+e+" shares, use at least "+i+" bits.");if("number"!=typeof r||r%1!=0||r<2)throw new Error("Threshold number of shares must be an integer between 2 and 2^bits-1 ("+b.maxShares+"), inclusive.");if(r>b.maxShares)throw i=Math.ceil(Math.log(r+1)/Math.LN2),new Error("Threshold number of shares must be an integer between 2 and 2^bits-1 ("+b.maxShares+"), inclusive.  To use a threshold of "+r+", use at least "+i+" bits.");if(e<r)throw new Error("Threshold number of shares was "+r+" but must be less than or equal to the "+e+" shares specified as the total to generate.");if("number"!=typeof n||n%1!=0||n<0||1024<n)throw new Error("Zero-pad length must be an integer between 0 and 1024 inclusive.");for(o=0,h=(t=d(t="1"+c(t),n)).length;o<h;o++)for(a=x(t[o],e,r),s=0;s<e;s++)u[s]=u[s]||a[s].x.toString(b.radix),f[s]=g(a[s].y.toString(2))+(f[s]||"");for(o=0;o<e;o++)u[o]=v(b.bits,u[o],m(f[o]));return u},newShare:function(t,e){var r;if(t&&"string"==typeof t&&(t=parseInt(t,b.radix)),r=t.toString(b.radix),t&&r&&e&&e[0])return v(this.extractShareComponents(e[0]).bits,r,this.combine(e,t));throw new Error("Invalid 'id' or 'shares' Array argument to newShare().")},_reset:h,_padLeft:g,_hex2bin:c,_bin2hex:m,_hasCryptoGetRandomValues:o,_hasCryptoRandomBytes:l,_getRNG:p,_isSetRNG:f,_splitNumStringToIntArray:d,_horner:w,_lagrange:y,_getShares:x,_constructPublicShareString:v};return t.init(),t});
+        </script>
+    </body>
+</html>
