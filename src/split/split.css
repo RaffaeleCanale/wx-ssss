@@ -1,0 +1,32 @@
+input.small {
+    width: 2.5rem;
+}
+
+.share-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.share {
+    font-family: monospace;
+    font-size: 0.9rem;
+    background-color: #f4f4f4;
+    transition: background-color 0.3s ease-out;
+    padding: 1rem 0.5rem;
+    border-radius: 5px;
+    display: inline-block;
+    flex-grow: 1;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+.password-fields {
+    display: flex;
+    gap: 1rem;
+}
+
+details {
+    margin-bottom: 1rem;
+}

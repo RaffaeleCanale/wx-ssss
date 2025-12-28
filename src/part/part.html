@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Part __SELF_PART_NUMBER__ (__GROUP_ID__)</title>
+        <link rel="stylesheet" href="../common/global.css" />
+        <link rel="stylesheet" href="part.css" />
+        <script src="../common/copyToClipboard.js"></script>
+
+        <!-- Combine -->
+        <script src="../common/checkIcons.js"></script>
+        <script src="../sss/secrets.min.js"></script>
+        <script src="../crypto/base64.js"></script>
+        <script src="../crypto/encrypter.js"></script>
+        <link rel="stylesheet" href="../combine/combine.css" />
+        <script src="../combine/combine.js"></script>
+        <script>
+            window.addEventListener("DOMContentLoaded", () => {
+                combine();
+            });
+        </script>
+    </head>
+    <body>
+        <main>
+            <header>
+                <nav>
+                    <a href="https://html-vault.com">Website</a>
+                </nav>
+            </header>
+
+            __CUSTOM_HEADER__
+
+            <h2>Part __SELF_PART_NUMBER__ (__GROUP_ID__)</h2>
+            <div class="share-container">
+                <div class="share" id="self-part">__SELF_PART__</div>
+                <button onclick="copyToClipboard('self-part')">
+                    <svg
+                        height="1rem"
+                        width="1rem"
+                        clip-rule="evenodd"
+                        fill-rule="evenodd"
+                        stroke-linejoin="round"
+                        stroke-miterlimit="2"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="m6 19v2c0 .621.52 1 1 1h2v-1.5h-1.5v-1.5zm7.5 3h-3.5v-1.5h3.5zm4.5 0h-3.5v-1.5h3.5zm4-3h-1.5v1.5h-1.5v1.5h2c.478 0 1-.379 1-1zm-1.5-1v-3.363h1.5v3.363zm0-4.363v-3.637h1.5v3.637zm-13-3.637v3.637h-1.5v-3.637zm11.5-4v1.5h1.5v1.5h1.5v-2c0-.478-.379-1-1-1zm-10 0h-2c-.62 0-1 .519-1 1v2h1.5v-1.5h1.5zm4.5 1.5h-3.5v-1.5h3.5zm3-1.5v-2.5h-13v13h2.5v-1.863h1.5v3.363h-4.5c-.48 0-1-.379-1-1v-14c0-.481.38-1 1-1h14c.621 0 1 .522 1 1v4.5h-3.5v-1.5z"
+                            fill-rule="nonzero"
+                        />
+                    </svg>
+                </button>
+            </div>
+
+            <details class="cta">
+                <summary>
+                    Combine with other parts
+                    <svg
+                        height="24"
+                        width="24"
+                        fill="#3333bb"
+                        focusable="false"
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
+                        ></path>
+                    </svg>
+                </summary>
+                <h1>Combine parts</h1>
+                <p>
+                    Combine as many parts as needed to reconstruct the secret.
+                    The order does not matter.
+                </p>
+
+                <div id="inputs">
+                    <div id="input-0-label" class="row">
+                        <svg
+                            height="24"
+                            width="24"
+                            fill="#3333bb"
+                            focusable="false"
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <input
+                        placeholder="Enter a part"
+                        oninput="combine()"
+                        value="__SELF_PART__"
+                    />
+                    <div id="input-1-label" class="row">
+                        <svg
+                            height="24"
+                            width="24"
+                            fill="#3333bb"
+                            focusable="false"
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <input placeholder="Enter a part" oninput="combine()" />
+                </div>
+
+                <p>
+                    <details>
+                        <summary>Password</summary>
+                        <p>
+                            If the parts are encrypted, enter the password used
+                            to encrypt them.
+                        </p>
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="Enter password"
+                            oninput="combine()"
+                        />
+                    </details>
+                </p>
+
+                <h2>Reconstructed secret</h2>
+                <div id="output"></div>
+            </details>
+        </main>
+    </body>
+</html>

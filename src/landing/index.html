@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Shamir Secret Sharing Scheme</title>
+        <link rel="stylesheet" href="../common/global.css" />
+    </head>
+    <body>
+        <main>
+            <header>
+                <nav>
+                    <a href="">Home</a>
+                    <a href="/split">Split</a>
+                    <a href="/combine">Combine parts</a>
+                </nav>
+            </header>
+
+            <h1>Shamir Secret Sharing Scheme</h1>
+
+            <p>
+                This tools offers a practical implementation of
+                <a
+                    href="https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Shamir's Secret Sharing Scheme (SSSS)</a
+                >, a cryptographic method for securely splitting a secret into
+                multiple parts. The secret can only be reconstructed when a
+                sufficient number of parts are combined, ensuring that no single
+                part reveals any information about the original secret.
+            </p>
+            <!-- <img src="./schema.png" /> -->
+            <p>
+                This implementation is inspired by
+                <a
+                    href="https://iancoleman.io/shamir/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Ian Coleman's SSSS tool</a
+                >
+                with additional features (e.g. optional encryption,
+                self-contained part files).
+            </p>
+
+            <h1>How to use: creating a shared secret</h1>
+            <ul>
+                <li>
+                    Navigate to the
+                    <a href="/split">Split</a> page.
+                </li>
+                <li>
+                    Enter the secret you want to split. This can be any text,
+                    such as a password, a private key, or any sensitive
+                    information.
+                </li>
+                <li>
+                    Specify the total number of parts to create and the minimum
+                    number of parts required to reconstruct the secret.
+                </li>
+                <li>
+                    (Optional) Set a password to encrypt the secret before
+                    splitting it. This adds an extra layer of security.
+                </li>
+                <li>
+                    Either save each part or download them as self-contained
+                    files.
+                </li>
+            </ul>
+
+            <h1>How to use: reconstructing the secret</h1>
+            <ul>
+                <li>
+                    Either navigate to the
+                    <a href="/combine">Combine parts</a> page or open a
+                    self-contained part file.
+                </li>
+                <li>
+                    Paste the other parts needed to reach the minimum threshold.
+                </li>
+                <li>
+                    (If applicable) Enter the password used to encrypt the
+                    secret.
+                </li>
+            </ul>
+
+            <h2>References</h2>
+            <p>
+                Inspired by:
+                <a
+                    href="https://iancoleman.io/shamir/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >https://iancoleman.io/shamir/</a
+                >
+            </p>
+            <p>
+                <a
+                    href="https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Shamir Secret Sharing Wikipedia</a
+                >
+            </p>
+            <p>
+                <a
+                    href="https://github.com/RaffaeleCanale/wx-ssss"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Source code</a
+                >
+            </p>
+            <p>
+                <a
+                    href="https://github.com/grempe/secrets.js/tree/master"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Secrets.js library</a
+                >
+            </p>
+        </main>
+    </body>
+</html>

@@ -1,16 +1,21 @@
 {
-  "name": "wx-ssss",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.18.2",
-  "devDependencies": {
-    "firebase-tools": "^15.1.0"
-  }
+    "name": "wx-ssss",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "dev": "http-server src/",
+        "build": "node build.ts"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "packageManager": "pnpm@10.18.2",
+    "devDependencies": {
+        "@types/web-resource-inliner": "^4.2.5",
+        "firebase-tools": "^15.1.0",
+        "http-server": "^14.1.1",
+        "web-resource-inliner": "^8.0.0"
+    }
 }

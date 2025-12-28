@@ -1,0 +1,58 @@
+.share-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.share {
+    font-family: monospace;
+    font-size: 0.9rem;
+    background-color: #f4f4f4;
+    transition: background-color 0.3s ease-out;
+    padding: 1rem 0.5rem;
+    border-radius: 5px;
+    display: inline-block;
+    flex-grow: 1;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+details.cta > summary svg {
+    /* fill: currentColor; */
+    transition: transform 0.5s ease;
+    transform: rotate(90deg);
+}
+
+details[open].cta > summary svg {
+    transform: rotate(270deg);
+}
+
+details[open].cta > summary {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.cta > summary {
+    margin-top: 50px;
+    padding: 1em 1em;
+    font-size: 1.1rem;
+    color: #333;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: border-radius 0.3s ease;
+
+    /* Roll our own marker */
+    display: flex;
+    justify-content: center;
+    gap: 0.5em;
+
+    &::marker {
+        content: "";
+        justify-self: end;
+    }
+    &:hover {
+        /* color: #666; */
+        background-color: #f4f4f4;
+    }
+}

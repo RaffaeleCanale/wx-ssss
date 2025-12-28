@@ -1,0 +1,35 @@
+#inputs {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    align-items: center;
+}
+
+#inputs .row {
+    justify-self: end;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#output span {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 5px;
+    border: 1px dashed #ccc;
+    font-size: 0.9rem;
+    font-style: italic;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    overflow-y: auto;
+}
+
+#output span.secret {
+    font-style: normal;
+    text-align: initial;
+    white-space: pre-line;
+}

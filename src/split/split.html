@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <script src="../sss/secrets.min.js"></script>
+        <script src="../common/ccIcon.js"></script>
+        <script src="../common/copyToClipboard.js"></script>
+        <script src="template.js"></script>
+        <script src="split.js"></script>
+        <link rel="stylesheet" href="split.css" />
+        <script src="../common/tar.js"></script>
+        <script src="../crypto/base64.js"></script>
+        <script src="../crypto/encrypter.js"></script>
+        <title>Shamir Secret Sharing Scheme</title>
+        <link rel="stylesheet" href="../common/global.css" />
+    </head>
+    <body>
+        <main>
+            <header>
+                <nav>
+                    <a href="">Home</a>
+                    <a href="/split">Split</a>
+                    <a href="/combine">Combine parts</a>
+                </nav>
+            </header>
+            <h1>Shamir Secret Sharing Scheme</h1>
+            <div>
+                <p>
+                    Split your secret into parts which can be combined back into
+                    the original secret using some or all of the parts.
+                </p>
+                <p>
+                    Require
+                    <input
+                        id="requiredParts"
+                        type="number"
+                        value="3"
+                        min="2"
+                        max="255"
+                        class="small"
+                        oninput="updateParts()"
+                    />
+                    parts from
+                    <input
+                        id="totalParts"
+                        type="number"
+                        value="5"
+                        min="2"
+                        max="255"
+                        class="small"
+                        oninput="updateParts()"
+                    />
+                    to reconstruct the following secret
+                </p>
+                <textarea
+                    id="secret"
+                    rows="10"
+                    placeholder="Enter your secret here"
+                    oninput="updateParts()"
+                ></textarea>
+            </div>
+
+            <h3>Additional options</h3>
+            <details>
+                <summary>Password</summary>
+
+                <p>
+                    Shamir's Secret Sharing is mathematically secure (i.e.
+                    information cannot be extracted without the required number
+                    of parts). However, to add an additional layer of security,
+                    you can optionally protect the secret with a password. The
+                    password will be required to reconstruct the secret from the
+                    parts.
+                </p>
+
+                <p class="password-fields">
+                    <input
+                        id="password"
+                        type="password"
+                        placeholder="Enter password here"
+                        oninput="updateParts()"
+                    />
+                    <input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="Confirm password"
+                        oninput="updateParts()"
+                    />
+                </p>
+            </details>
+
+            <details>
+                <summary>Custom header</summary>
+
+                <p>
+                    Optionally add a custom header to the generated parts, can
+                    be useful to attach additional explanations in the parts'
+                    HTML files.
+                </p>
+                <textarea
+                    id="customHeader"
+                    rows="5"
+                    placeholder="Enter custom header here"
+                    oninput="updateParts()"
+                ></textarea>
+            </details>
+
+            <h2>Generated Parts:</h2>
+
+            <div id="output">
+                <span class="placeholder"
+                    >Enter a secret and adjust the parameters to see the
+                    parts</span
+                >
+            </div>
+        </main>
+    </body>
+</html>

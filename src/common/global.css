@@ -1,0 +1,34 @@
+main {
+    max-width: 800px;
+    margin: auto;
+    font-family: Arial, sans-serif;
+}
+
+:focus {
+    outline-color: #4a90e2;
+    outline-width: 2px;
+    outline-style: solid;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 0.5rem 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+nav {
+    display: flex;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    border-bottom: 1px solid #ccc;
+}
