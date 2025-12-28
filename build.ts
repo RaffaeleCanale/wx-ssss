@@ -12,8 +12,8 @@ const Paths = {
     },
     build: {
         landing: path.join(__dirname, "public", "index.html"),
-        split: path.join(__dirname, "public", "split.html"),
-        combine: path.join(__dirname, "public", "combine.html"),
+        split: path.join(__dirname, "public", "split", "index.html"),
+        combine: path.join(__dirname, "public", "combine", "index.html"),
     },
 };
 
