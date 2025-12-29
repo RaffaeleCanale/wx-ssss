@@ -134,7 +134,7 @@ details.menu[open] {
 }
 
 details.menu[open] summary::after {
-    content: "−";
+    content: "-";
     transform: rotate(180deg);
 }
 
