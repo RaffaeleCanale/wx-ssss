@@ -32,6 +32,7 @@
     align-items: center;
     gap: 12px;
     box-shadow: 0 0 15px rgba(244, 63, 94, 0.05);
+    overflow-x: auto;
 }
 
 #output span.secret {
