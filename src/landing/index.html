@@ -4,121 +4,374 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>Shamir Secret Sharing Scheme</title>
+        <title>HTML Vault</title>
         <link rel="stylesheet" href="../common/global.css" />
+        <link rel="stylesheet" href="landing.css" />
+        <script src="landing.js"></script>
     </head>
     <body>
         <main>
+            <div id="fullPage" onclick="this.style.display='none'"></div>
             <header>
                 <nav>
                     <a href="https://html-vault.com">Home</a>
-                    <a href="https://html-vault.com/split">Split</a>
-                    <a href="https://html-vault.com/combine">Combine parts</a>
+                    <a href="https://html-vault.com/split">Split Tool</a>
+                    <a href="https://html-vault.com/combine">Combine Tool</a>
                 </nav>
             </header>
 
-            <h1>Shamir Secret Sharing Scheme</h1>
+            <section class="hero-section">
+                <div class="banner">Zero-Knowledge • Offline • Open Source</div>
 
-            <p>
-                This tools offers a practical implementation of
-                <a
-                    href="https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Shamir's Secret Sharing Scheme (SSSS)</a
-                >, a cryptographic method for securely splitting a secret into
-                multiple parts. The secret can only be reconstructed when a
-                sufficient number of parts are combined, ensuring that no single
-                part reveals any information about the original secret.
-            </p>
-            <!-- <img src="./schema.png" /> -->
-            <p>
-                This implementation is inspired by
-                <a
-                    href="https://iancoleman.io/shamir/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Ian Coleman's SSSS tool</a
-                >
-                with additional features (e.g. optional encryption,
-                self-contained part files).
-            </p>
+                <h1>
+                    Your Secrets,
+                    <span style="color: #38bdf8">Distributed.</span>
+                </h1>
 
-            <h1>How to use: creating a shared secret</h1>
-            <ul>
-                <li>
-                    Navigate to the
-                    <a href="/split">Split</a> page.
-                </li>
-                <li>
-                    Enter the secret you want to split. This can be any text,
-                    such as a password, a private key, or any sensitive
-                    information.
-                </li>
-                <li>
-                    Specify the total number of parts to create and the minimum
-                    number of parts required to reconstruct the secret.
-                </li>
-                <li>
-                    (Optional) Set a password to encrypt the secret before
-                    splitting it. This adds an extra layer of security.
-                </li>
-                <li>
-                    Either save each part or download them as self-contained
-                    files.
-                </li>
-            </ul>
+                <p>
+                    Securely split sensitive data into self-contained HTML
+                    "parts." Losing one doesn't matter. Stealing one is useless.
+                    Only you and your threshold of parts can bring the secret
+                    back to life.
+                </p>
 
-            <h1>How to use: reconstructing the secret</h1>
-            <ul>
-                <li>
-                    Either navigate to the
-                    <a href="/combine">Combine parts</a> page or open a
-                    self-contained part file.
-                </li>
-                <li>
-                    Paste the other parts needed to reach the minimum threshold.
-                </li>
-                <li>
-                    (If applicable) Enter the password used to encrypt the
-                    secret.
-                </li>
-            </ul>
+                <div class="cta-container">
+                    <a href="/split" class="button"> Split a Secret </a>
+                    <a href="#how-it-works" class="button secondary">
+                        How it Works
+                    </a>
+                </div>
+            </section>
 
-            <h2>References</h2>
-            <p>
-                Inspired by:
-                <a
-                    href="https://iancoleman.io/shamir/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >https://iancoleman.io/shamir/</a
-                >
-            </p>
-            <p>
-                <a
-                    href="https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Shamir Secret Sharing Wikipedia</a
-                >
-            </p>
-            <p>
-                <a
-                    href="https://github.com/RaffaeleCanale/wx-ssss"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Source code</a
-                >
-            </p>
-            <p>
-                <a
-                    href="https://github.com/grempe/secrets.js/tree/master"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Secrets.js library</a
-                >
-            </p>
+            <section class="motivation">
+                <div class="container">
+                    <div class="icon">🔗</div>
+
+                    <h2>Project Context & Motivation</h2>
+
+                    <p>
+                        This project was motivated by the the Hacker News
+                        discussion "<a
+                            href="https://news.ycombinator.com/item?id=37534615"
+                            target="_blank"
+                            >Horcrux: Split your file into encrypted
+                            fragments</a
+                        >" and the desire to create a more self contained and
+                        practical implementation of the same concept for
+                        personal use.
+                    </p>
+                    <p>
+                        The goal was for this tool to work on any platform and
+                        require no dependencies (other than a web browser), and
+                        be future-proof enough to be usable decades from now. An
+                        excellent similar tool was created by Ian Coleman (<a
+                            href="https://iancoleman.io/shamir/"
+                            target="_blank"
+                            >https://iancoleman.io/shamir/</a
+                        >) which heavily inspired this project, this iteration
+                        adds more features such as self-contained parts and
+                        optional password protection.
+                    </p>
+                </div>
+            </section>
+
+            <section id="how-it-works" class="visual-flow-section">
+                <div style="text-align: center; margin-bottom: 60px">
+                    <h2>How to Use</h2>
+                    <p>
+                        The entire process executes locally within your
+                        browser's memory.
+                    </p>
+                </div>
+
+                <div class="steps-container">
+                    <div class="step-module">
+                        <div class="image-container">
+                            <div class="overlay">
+                                <img
+                                    onclick="onImageClick(event)"
+                                    src="part1.png"
+                                    alt="Step 1 Input Schematic"
+                                />
+                            </div>
+                            <div class="badge">1</div>
+                        </div>
+                        <h3>Input Locally</h3>
+                        <p>
+                            Paste your secret (text, seed phrase, password) into
+                            the browser. It never leaves your device.
+                        </p>
+                    </div>
+
+                    <div class="step-module">
+                        <div class="image-container">
+                            <div class="overlay">
+                                <img
+                                    onclick="onImageClick(event)"
+                                    src="part2.png"
+                                    alt="Step 2 Split Schematic"
+                                />
+                            </div>
+                            <div class="badge">2</div>
+                        </div>
+                        <h3>Set Thresholds</h3>
+                        <p>
+                            Define the total number of parts (N) and the minimum
+                            required to recover (K). E.g., "3 of 5".
+                        </p>
+                    </div>
+
+                    <div class="step-module">
+                        <div class="image-container">
+                            <div class="overlay">
+                                <img
+                                    onclick="onImageClick(event)"
+                                    src="part3.png"
+                                    alt="Step 3 Distribute Schematic"
+                                />
+                            </div>
+                            <div class="badge">3</div>
+                        </div>
+                        <h3>Download & Scatter</h3>
+                        <p>
+                            Get individual HTML files. Store them on USBs,
+                            different cloud services, or share them with trusted
+                            contacts.
+                        </p>
+                    </div>
+
+                    <div class="step-module">
+                        <div class="image-container">
+                            <div class="overlay">
+                                <img
+                                    onclick="onImageClick(event)"
+                                    src="part4.png"
+                                    alt="Step 4 Recovery Schematic"
+                                />
+                            </div>
+                            <div class="badge">4</div>
+                        </div>
+                        <h3>Reassemble Anywhere</h3>
+                        <p>
+                            Open any single part file in a browser. Paste in the
+                            remaining required parts to unlock the secret.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="how-it-works-section">
+                <div class="container">
+                    <div>
+                        <h3>01. The Algorithm</h3>
+                        <p>
+                            This tool utilizes
+                            <a
+                                href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing"
+                                target="_blank"
+                                >Shamir's Secret Sharing</a
+                            >
+                            to split data into unique parts. This algorithm
+                            provides Information-Theoretic Security, meaning
+                            that even with infinite computing power, an attacker
+                            with fewer than the required parts can never
+                            reconstruct the secret.
+                        </p>
+                        <p>
+                            The core logic is based on the proven, open-source
+                            <a
+                                href="https://github.com/grempe/secrets.js"
+                                target="_blank"
+                                >secrets.js</a
+                            >
+                            implementation, which was security audited in 2019.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3>02. Fully self-contained</h3>
+                        <p>
+                            All pages are built in a fully self-contained and
+                            static manner, they also have no external
+                            dependencies. This means you can save the split
+                            tool, or combine tool as a simple HTML file and run
+                            it entirely offline, even if this website goes down.
+                        </p>
+                        <p>
+                            All the parts generated by the split tool are also
+                            fully self-contained HTML files, meaning recovery
+                            from parts will always be possible for as long as
+                            web browsers exist.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="use-cases-section">
+                <div style="text-align: center; margin-bottom: 60px">
+                    <h2>Practical Applications</h2>
+                    <p>Scenarios for individual digital resilience.</p>
+                </div>
+
+                <div class="container">
+                    <div class="card">
+                        <div class="icon">🏡</div>
+                        <h3>Digital Inheritance</h3>
+                        <p>
+                            Distribute shares of your master password to family
+                            members. No one can access your accounts alone, but
+                            they can recover access together if you are
+                            incapacitated.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">🌍</div>
+                        <h3>Geographic Redundancy</h3>
+                        <p>
+                            Split your primary email recovery code. Store shares
+                            in different physical locations (home, office, safe)
+                            to ensure a single fire or burglary doesn't lock you
+                            out.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">🤝</div>
+                        <h3>Collaborative Custody</h3>
+                        <p>
+                            Protect sensitive family documents by requiring a
+                            "quorum" of trusted friends to unlock them. This
+                            ensures that no single person holds the power of
+                            access.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="faq-section">
+                <div style="text-align: center; margin-bottom: 60px">
+                    <h2>Frequently Asked Questions</h2>
+                </div>
+
+                <details class="menu">
+                    <summary>What happens if I lose one of the parts?</summary>
+                    <p>
+                        As long as you still have the minimum number of parts
+                        (your threshold <em>k</em>), you can fully recover your
+                        secret. If you fall below that number, the secret is
+                        mathematically impossible to recover.
+                    </p>
+                </details>
+
+                <details class="menu">
+                    <summary>Are individual parts "encrypted"?</summary>
+                    <p>
+                        No, and they don't need to. The individual parts are
+                        secure by design because they are mathematically
+                        incomplete.
+                    </p>
+                    <p>
+                        Unless someone possesses the minimum number of parts you
+                        specified (the threshold), the individual shares they
+                        hold are effectively random noise. They contain zero
+                        information about your original secret, making it
+                        impossible to "crack" or guess. You can store these
+                        files on a USB drive, in the cloud, or on paper without
+                        needing any additional encryption or passwords.
+                    </p>
+                </details>
+
+                <details class="menu">
+                    <summary>
+                        Can I use any browsers for splitting and combining?
+                    </summary>
+                    <p>
+                        Yes. The self-contained HTML files use standard
+                        JavaScript. You can generate them in Chrome on a Mac and
+                        reconstruct them in Firefox on Linux. No internet
+                        connection is required.
+                    </p>
+                </details>
+
+                <details class="menu">
+                    <summary>
+                        Why is there the option to password-protect the secret
+                        when encryption is not needed?
+                    </summary>
+                    <p>
+                        This option allows to add a second layer of security if
+                        needed.
+                    </p>
+                    <p>
+                        The individual parts cannot be deciphered whether a
+                        password is used or not. However, as soon as the minimum
+                        number of parts is gathered, the secret can be
+                        reconstructed.
+                    </p>
+                    <p>
+                        By adding a password, even if an attacker manages to
+                        collect enough parts, they would still need to know the
+                        password to access the original secret.
+                    </p>
+                </details>
+
+                <details class="menu">
+                    <summary>
+                        Is there a limit to how large the secret can be?
+                    </summary>
+                    <p>
+                        While there is no hard mathematical limit, extremely
+                        large secrets will result in very large HTML files and
+                        may slow down your browser's RAM during the splitting
+                        process. It is ideal for text up to 50KB (approx. 10,000
+                        words).
+                    </p>
+                </details>
+            </section>
+
+            <footer>
+                <div class="container">
+                    <div>
+                        <h4>Resources</h4>
+                        <ul>
+                            <li>
+                                <a
+                                    href="https://github.com/RaffaeleCanale/wx-ssss"
+                                    >GitHub Repository</a
+                                >
+                            </li>
+                            <li>
+                                <a href="https://github.com/grempe/secrets.js"
+                                    >grempe/secret.js</a
+                                >
+                            </li>
+                            <li>
+                                <a href="https://github.com/unjs/nanotar"
+                                    >unjs/nanotar</a
+                                >
+                            </li>
+                            <li>
+                                <a href="https://iancoleman.io/shamir/"
+                                    >iancoleman/shamir</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4>Contact</h4>
+                        <ul>
+                            <li>
+                                <a href="mailto:support@canale.io">Email Me</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="colophon">
+                    © 2025 • v1.0.0 • Open Source Utility • No Tracking
+                </div>
+            </footer>
         </main>
     </body>
 </html>

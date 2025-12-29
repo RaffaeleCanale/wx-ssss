@@ -38,7 +38,17 @@ async function inline(inputPath: string): Promise<string> {
     });
 }
 
+async function copyImages() {
+    for (let i = 1; i <= 4; i++) {
+        const srcPath = path.join(__dirname, "src", "landing", `part${i}.png`);
+        const destPath = path.join(__dirname, "public", `part${i}.png`);
+        await fs.copyFile(srcPath, destPath);
+    }
+}
+
 async function build() {
+    await copyImages();
+
     const combine = await inline(Paths.src.combine);
     await fs.writeFile(Paths.build.combine, combine, "utf-8");
 

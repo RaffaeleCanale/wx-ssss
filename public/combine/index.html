@@ -6,39 +6,191 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>Combine</title>
         <style>
-main {
-    max-width: 800px;
-    margin: auto;
-    font-family: Arial, sans-serif;
+body {
+    background-color: #0f172a;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        sans-serif;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 :focus {
-    outline-color: #4a90e2;
-    outline-width: 2px;
-    outline-style: solid;
+    outline: 2px solid #38bdf8;
+}
+
+section {
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 input,
 textarea {
     width: 100%;
-    padding: 0.5rem;
-    border-radius: 10px;
-    border: 1px solid #ccc;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    color: #f8fafc;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:hover,
+textarea:hover {
+    border-color: #475569;
+}
+
+input:focus,
+textarea:focus {
+    background-color: #0f172a;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 1px #38bdf8;
 }
 
 button {
-    padding: 0.5rem 0.5rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
+    border: none;
+    background-color: #38bdf8;
+    color: #0f172a;
+    font-weight: 700;
     cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+button:hover {
+    background-color: #7dd3fc;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+a.button {
+    text-decoration: none;
+    background-color: #38bdf8;
+    color: #0f172a;
+    padding: 16px 32px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+}
+a.button.secondary {
+    background-color: transparent;
+    color: #f8fafc;
+    border: 1px solid #334155;
 }
 
 nav {
     display: flex;
-    padding: 1rem;
+    padding: 1.25rem 2rem;
+    margin-bottom: 2rem;
+    gap: 1.5rem;
+    border-bottom: 1px solid #1e293b;
+    background-color: #0f172a;
+    align-items: center;
+}
+
+nav a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+nav a:hover,
+nav a.active {
+    color: #38bdf8;
+}
+
+details.menu {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
     margin-bottom: 1rem;
+    transition: all 0.2s ease;
+}
+
+details.menu[open] {
+    border-color: #38bdf8;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+}
+
+.menu summary {
+    padding: 1rem;
+    font-weight: 600;
+    color: #f8fafc;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    outline: none;
+}
+
+.menu summary::after {
+    content: "+";
+    font-family: "Courier New", monospace;
+    color: #38bdf8;
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+details.menu[open] summary::after {
+    content: "−";
+    transform: rotate(180deg);
+}
+
+.menu summary::-webkit-details-marker {
+    display: none;
+}
+
+details.menu div,
+details.menu p {
+    padding: 0 1rem 1rem 1rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.share-container {
+    display: flex;
+    align-items: center;
     gap: 1rem;
-    border-bottom: 1px solid #ccc;
+    margin-bottom: 0.5rem;
+}
+
+.share {
+    font-family: "Courier New", monospace;
+    font-size: 0.85rem;
+    background-color: #0f172a;
+    color: #38bdf8;
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid #334155;
+
+    display: inline-block;
+    flex-grow: 1;
+    overflow-x: auto;
+    white-space: nowrap;
+
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease-out;
+}
+
+.share:hover {
+    border-color: #38bdf8;
+    background-color: #1e293b;
+}
+
+.share::selection {
+    background: #38bdf8;
+    color: #0f172a;
 }
 
 </style>
@@ -50,7 +202,7 @@ const crossIcon =
     '<svg height="24" width="24" fill="#bb2233" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12z"></path></svg>';
 
 const arrowRightIcon =
-    '<svg height="24" width="24" fill="#3333bb" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"></path></svg>';
+    '<svg height="24" width="24" fill="#38bdf8" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"></path></svg>';
 
 </script>
         <script>
@@ -308,23 +460,32 @@ async function decrypt(data, passwordStr) {
     gap: 10px;
 }
 
+.password-container {
+    padding: 0 20px 20px 20px;
+}
+
 #output span {
-    background-color: #f9f9f9;
-    padding: 1rem;
-    border-radius: 5px;
-    border: 1px dashed #ccc;
-    font-size: 0.9rem;
-    font-style: italic;
-    display: inline-block;
-    width: 100%;
-    text-align: center;
-    overflow-y: auto;
+    background-color: #0f172a;
+    color: #fb7185;
+    padding: 1.25rem;
+    border-radius: 8px;
+    border: 1px solid #991b1b;
+    font-family: "Courier New", monospace;
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 0 15px rgba(244, 63, 94, 0.05);
 }
 
 #output span.secret {
+    color: #4ade80;
+    border: 1px solid #166534;
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.05);
     font-style: normal;
     text-align: initial;
-    white-space: pre-line;
+    white-space: pre-wrap;
 }
 
 </style>
@@ -349,16 +510,21 @@ function getParts() {
 
 async function updateOutput(parts) {
     const output = document.getElementById("output");
+    const span = document.createElement("span");
+    output.innerHTML = "";
+    output.appendChild(span);
+
     try {
         const secret = await decodeParts(parts);
 
-        output.innerHTML = `<span class="secret">${secret}</span>`;
+        span.textContent = secret;
+        span.className = "secret";
     } catch (error) {
         if (error.name === "OperationError") {
-            output.innerHTML = `<span>Invalid password</span>`;
+            span.textContent = "Invalid password";
             return;
         }
-        output.innerHTML = `<span>${error.message}</span>`;
+        span.textContent = error.message;
     }
 }
 
@@ -430,67 +596,74 @@ function updatePartsUi(parts) {
             <header>
                 <nav>
                     <a href="https://html-vault.com">Home</a>
-                    <a href="https://html-vault.com/split">Split</a>
-                    <a href="https://html-vault.com/combine">Combine parts</a>
+                    <a href="https://html-vault.com/split">Split Tool</a>
+                    <a href="https://html-vault.com/combine">Combine Tool</a>
                 </nav>
             </header>
-            <h1>Combine parts</h1>
-            <p>
-                Combine as many parts as needed to reconstruct the secret. The
-                order does not matter.
-            </p>
 
-            <div id="inputs">
-                <div id="input-0-label" class="row">
-                    <svg
-                        height="24"
-                        width="24"
-                        fill="#3333bb"
-                        focusable="false"
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
-                        ></path>
-                    </svg>
+            <section>
+                <h1>Combine parts</h1>
+                <p>
+                    Combine as many parts as needed to reconstruct the secret.
+                    The order does not matter.
+                </p>
+
+                <div id="inputs">
+                    <div id="input-0-label" class="row">
+                        <svg
+                            height="24"
+                            width="24"
+                            fill="#38bdf8"
+                            focusable="false"
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <input placeholder="Enter a part" oninput="combine()" />
+                    <div id="input-1-label" class="row">
+                        <svg
+                            height="24"
+                            width="24"
+                            fill="#38bdf8"
+                            focusable="false"
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <input placeholder="Enter a part" oninput="combine()" />
                 </div>
-                <input placeholder="Enter a part" oninput="combine()" />
-                <div id="input-1-label" class="row">
-                    <svg
-                        height="24"
-                        width="24"
-                        fill="#3333bb"
-                        focusable="false"
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
-                        ></path>
-                    </svg>
-                </div>
-                <input placeholder="Enter a part" oninput="combine()" />
-            </div>
 
-            <p>
-                <details>
-                    <summary>Password</summary>
-                    <p>
-                        If the parts are encrypted, enter the password used to
-                        encrypt them.
-                    </p>
-                    <input
-                        id="password"
-                        type="password"
-                        placeholder="Enter password"
-                        oninput="combine()"
-                    />
-                </details>
-            </p>
+                <p>
+                    <details class="menu">
+                        <summary>Password</summary>
+                        <p>
+                            If the parts are encrypted, enter the password used
+                            to encrypt them.
+                        </p>
+                        <div class="password-container">
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder="Enter password"
+                                oninput="combine()"
+                            />
+                        </div>
+                    </details>
+                </p>
+            </section>
 
-            <h2>Reconstructed secret</h2>
-            <div id="output"></div>
+            <section>
+                <h2>Reconstructed secret</h2>
+                <div id="output"></div>
+            </section>
         </main>
     </body>
 </html>

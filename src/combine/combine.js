@@ -18,16 +18,21 @@ function getParts() {
 
 async function updateOutput(parts) {
     const output = document.getElementById("output");
+    const span = document.createElement("span");
+    output.innerHTML = "";
+    output.appendChild(span);
+
     try {
         const secret = await decodeParts(parts);
 
-        output.innerHTML = `<span class="secret">${secret}</span>`;
+        span.textContent = secret;
+        span.className = "secret";
     } catch (error) {
         if (error.name === "OperationError") {
-            output.innerHTML = `<span>Invalid password</span>`;
+            span.textContent = "Invalid password";
             return;
         }
-        output.innerHTML = `<span>${error.message}</span>`;
+        span.textContent = error.message;
     }
 }
 

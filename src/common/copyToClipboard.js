@@ -2,8 +2,8 @@ function copyToClipboard(elementId) {
     const element = document.getElementById(elementId);
     navigator.clipboard.writeText(element.innerText);
 
-    element.style.backgroundColor = "#d4edda";
+    element.style.backgroundColor = "#334155";
     setTimeout(() => {
-        element.style.backgroundColor = "#f4f4f4";
+        element.style.backgroundColor = "#0f172a";
     }, 300);
 }

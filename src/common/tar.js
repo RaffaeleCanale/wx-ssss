@@ -1,4 +1,4 @@
-// From: https://github.dev/unjs/nanotar/blob/main/src/create.ts
+// From: https://github.com/unjs/nanotar/blob/main/src/create.ts
 
 /**
  * Creates a TAR file from a list of file inputs and options, returning the TAR file as an `Uint8Array`.

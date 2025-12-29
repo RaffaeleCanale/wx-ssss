@@ -86,10 +86,11 @@ async function updateParts() {
     const downloadAllFileName = `parts_${id}.tar.gz`;
 
     output.innerHTML = `
-                    <p>
-                     <a href="${downloadAllUrl}" download="${downloadAllFileName}">⏬ Download all parts (${
-        shares.length
-    })</a>
+                    <p class="download-all-container">
+                        <a href="${downloadAllUrl}" download="${downloadAllFileName}" class="button secondary">
+                            <span class="icon">💾</span>
+                            <span>Download All Parts (${shares.length})</span>
+                        </a>
                     </p>
                     <ol>
                         ${fields.join("\n")}

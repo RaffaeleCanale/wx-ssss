@@ -15,21 +15,30 @@
     gap: 10px;
 }
 
+.password-container {
+    padding: 0 20px 20px 20px;
+}
+
 #output span {
-    background-color: #f9f9f9;
-    padding: 1rem;
-    border-radius: 5px;
-    border: 1px dashed #ccc;
-    font-size: 0.9rem;
-    font-style: italic;
-    display: inline-block;
-    width: 100%;
-    text-align: center;
-    overflow-y: auto;
+    background-color: #0f172a;
+    color: #fb7185;
+    padding: 1.25rem;
+    border-radius: 8px;
+    border: 1px solid #991b1b;
+    font-family: "Courier New", monospace;
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 0 15px rgba(244, 63, 94, 0.05);
 }
 
 #output span.secret {
+    color: #4ade80;
+    border: 1px solid #166534;
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.05);
     font-style: normal;
     text-align: initial;
-    white-space: pre-line;
+    white-space: pre-wrap;
 }

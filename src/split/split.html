@@ -21,100 +21,107 @@
             <header>
                 <nav>
                     <a href="https://html-vault.com">Home</a>
-                    <a href="https://html-vault.com/split">Split</a>
-                    <a href="https://html-vault.com/combine">Combine parts</a>
+                    <a href="https://html-vault.com/split">Split Tool</a>
+                    <a href="https://html-vault.com/combine">Combine Tool</a>
                 </nav>
             </header>
-            <h1>Shamir Secret Sharing Scheme</h1>
-            <div>
-                <p>
-                    Split your secret into parts which can be combined back into
-                    the original secret using some or all of the parts.
-                </p>
-                <p>
-                    Require
-                    <input
-                        id="requiredParts"
-                        type="number"
-                        value="3"
-                        min="2"
-                        max="255"
-                        class="small"
+            <section>
+                <h1>Secure Secret Distribution</h1>
+                <div>
+                    <p>
+                        Deconstruct your sensitive data into unique,
+                        cryptographic shares. Individual shares reveal nothing;
+                        the secret only resurfaces when the threshold is met.
+                    </p>
+                    <p>
+                        Require a minimum of
+                        <input
+                            id="requiredParts"
+                            type="number"
+                            value="3"
+                            min="2"
+                            max="255"
+                            class="small"
+                            oninput="updateParts()"
+                        />
+                        parts out of a total of
+                        <input
+                            id="totalParts"
+                            type="number"
+                            value="5"
+                            min="2"
+                            max="255"
+                            class="small"
+                            oninput="updateParts()"
+                        />
+                        to recover the following secret:
+                    </p>
+                    <textarea
+                        id="secret"
+                        rows="10"
+                        placeholder="Enter your seed phrase, master password, or private message here..."
                         oninput="updateParts()"
-                    />
-                    parts from
-                    <input
-                        id="totalParts"
-                        type="number"
-                        value="5"
-                        min="2"
-                        max="255"
-                        class="small"
-                        oninput="updateParts()"
-                    />
-                    to reconstruct the following secret
-                </p>
-                <textarea
-                    id="secret"
-                    rows="10"
-                    placeholder="Enter your secret here"
-                    oninput="updateParts()"
-                ></textarea>
-            </div>
+                    ></textarea>
+                </div>
 
-            <h3>Additional options</h3>
-            <details>
-                <summary>Password</summary>
+                <h3>Additional options</h3>
+                <details class="menu">
+                    <summary>Password</summary>
 
-                <p>
-                    Shamir's Secret Sharing is mathematically secure (i.e.
-                    information cannot be extracted without the required number
-                    of parts). However, to add an additional layer of security,
-                    you can optionally protect the secret with a password. The
-                    password will be required to reconstruct the secret from the
-                    parts.
-                </p>
+                    <p>
+                        Shamir's Secret Sharing is mathematically secure (i.e.
+                        information cannot be extracted without the required
+                        number of parts). However, to add an additional layer of
+                        security, you can optionally protect the secret with a
+                        password. The password will be required to reconstruct
+                        the secret from the parts.
+                    </p>
 
-                <p class="password-fields">
-                    <input
-                        id="password"
-                        type="password"
-                        placeholder="Enter password here"
-                        oninput="updateParts()"
-                    />
-                    <input
-                        id="confirmPassword"
-                        type="password"
-                        placeholder="Confirm password"
-                        oninput="updateParts()"
-                    />
-                </p>
-            </details>
+                    <p class="password-fields">
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="Enter password here"
+                            oninput="updateParts()"
+                        />
+                        <input
+                            id="confirmPassword"
+                            type="password"
+                            placeholder="Confirm password"
+                            oninput="updateParts()"
+                        />
+                    </p>
+                </details>
 
-            <details>
-                <summary>Custom header</summary>
+                <details class="menu">
+                    <summary>Custom header</summary>
 
-                <p>
-                    Optionally add a custom header to the generated parts, can
-                    be useful to attach additional explanations in the parts'
-                    HTML files.
-                </p>
-                <textarea
-                    id="customHeader"
-                    rows="5"
-                    placeholder="Enter custom header here"
-                    oninput="updateParts()"
-                ></textarea>
-            </details>
+                    <p>
+                        Optionally add a custom header to the generated parts,
+                        can be useful to attach additional explanations in the
+                        parts' HTML files.
+                    </p>
+                    <div class="custom-header-container">
+                        <textarea
+                            id="customHeader"
+                            rows="5"
+                            placeholder="Enter custom header here"
+                            oninput="updateParts()"
+                        ></textarea>
+                    </div>
+                </details>
+            </section>
 
-            <h2>Generated Parts:</h2>
+            <section>
+                <h2>Generated Parts:</h2>
 
-            <div id="output">
-                <span class="placeholder"
-                    >Enter a secret and adjust the parameters to see the
-                    parts</span
-                >
-            </div>
+                <div id="output">
+                    <span class="placeholder"
+                        >Enter a secret and adjust the parameters to see the
+                        parts</span
+                    >
+                </div>
+            </section>
         </main>
     </body>
 </html>

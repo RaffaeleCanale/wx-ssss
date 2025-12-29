@@ -18,67 +18,74 @@
             <header>
                 <nav>
                     <a href="https://html-vault.com">Home</a>
-                    <a href="https://html-vault.com/split">Split</a>
-                    <a href="https://html-vault.com/combine">Combine parts</a>
+                    <a href="https://html-vault.com/split">Split Tool</a>
+                    <a href="https://html-vault.com/combine">Combine Tool</a>
                 </nav>
             </header>
-            <h1>Combine parts</h1>
-            <p>
-                Combine as many parts as needed to reconstruct the secret. The
-                order does not matter.
-            </p>
 
-            <div id="inputs">
-                <div id="input-0-label" class="row">
-                    <svg
-                        height="24"
-                        width="24"
-                        fill="#3333bb"
-                        focusable="false"
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
-                        ></path>
-                    </svg>
+            <section>
+                <h1>Combine parts</h1>
+                <p>
+                    Combine as many parts as needed to reconstruct the secret.
+                    The order does not matter.
+                </p>
+
+                <div id="inputs">
+                    <div id="input-0-label" class="row">
+                        <svg
+                            height="24"
+                            width="24"
+                            fill="#38bdf8"
+                            focusable="false"
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <input placeholder="Enter a part" oninput="combine()" />
+                    <div id="input-1-label" class="row">
+                        <svg
+                            height="24"
+                            width="24"
+                            fill="#38bdf8"
+                            focusable="false"
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <input placeholder="Enter a part" oninput="combine()" />
                 </div>
-                <input placeholder="Enter a part" oninput="combine()" />
-                <div id="input-1-label" class="row">
-                    <svg
-                        height="24"
-                        width="24"
-                        fill="#3333bb"
-                        focusable="false"
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
-                        ></path>
-                    </svg>
-                </div>
-                <input placeholder="Enter a part" oninput="combine()" />
-            </div>
 
-            <p>
-                <details>
-                    <summary>Password</summary>
-                    <p>
-                        If the parts are encrypted, enter the password used to
-                        encrypt them.
-                    </p>
-                    <input
-                        id="password"
-                        type="password"
-                        placeholder="Enter password"
-                        oninput="combine()"
-                    />
-                </details>
-            </p>
+                <p>
+                    <details class="menu">
+                        <summary>Password</summary>
+                        <p>
+                            If the parts are encrypted, enter the password used
+                            to encrypt them.
+                        </p>
+                        <div class="password-container">
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder="Enter password"
+                                oninput="combine()"
+                            />
+                        </div>
+                    </details>
+                </p>
+            </section>
 
-            <h2>Reconstructed secret</h2>
-            <div id="output"></div>
+            <section>
+                <h2>Reconstructed secret</h2>
+                <div id="output"></div>
+            </section>
         </main>
     </body>
 </html>

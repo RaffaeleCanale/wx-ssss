@@ -4,157 +4,861 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>Shamir Secret Sharing Scheme</title>
+        <title>HTML Vault</title>
         <style>
-main {
-    max-width: 800px;
-    margin: auto;
-    font-family: Arial, sans-serif;
+body {
+    background-color: #0f172a;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        sans-serif;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 :focus {
-    outline-color: #4a90e2;
-    outline-width: 2px;
-    outline-style: solid;
+    outline: 2px solid #38bdf8;
+}
+
+section {
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 input,
 textarea {
     width: 100%;
-    padding: 0.5rem;
-    border-radius: 10px;
-    border: 1px solid #ccc;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    color: #f8fafc;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:hover,
+textarea:hover {
+    border-color: #475569;
+}
+
+input:focus,
+textarea:focus {
+    background-color: #0f172a;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 1px #38bdf8;
 }
 
 button {
-    padding: 0.5rem 0.5rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
+    border: none;
+    background-color: #38bdf8;
+    color: #0f172a;
+    font-weight: 700;
     cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+button:hover {
+    background-color: #7dd3fc;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+a.button {
+    text-decoration: none;
+    background-color: #38bdf8;
+    color: #0f172a;
+    padding: 16px 32px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+}
+a.button.secondary {
+    background-color: transparent;
+    color: #f8fafc;
+    border: 1px solid #334155;
 }
 
 nav {
     display: flex;
-    padding: 1rem;
+    padding: 1.25rem 2rem;
+    margin-bottom: 2rem;
+    gap: 1.5rem;
+    border-bottom: 1px solid #1e293b;
+    background-color: #0f172a;
+    align-items: center;
+}
+
+nav a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+nav a:hover,
+nav a.active {
+    color: #38bdf8;
+}
+
+details.menu {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
     margin-bottom: 1rem;
+    transition: all 0.2s ease;
+}
+
+details.menu[open] {
+    border-color: #38bdf8;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+}
+
+.menu summary {
+    padding: 1rem;
+    font-weight: 600;
+    color: #f8fafc;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    outline: none;
+}
+
+.menu summary::after {
+    content: "+";
+    font-family: "Courier New", monospace;
+    color: #38bdf8;
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+details.menu[open] summary::after {
+    content: "−";
+    transform: rotate(180deg);
+}
+
+.menu summary::-webkit-details-marker {
+    display: none;
+}
+
+details.menu div,
+details.menu p {
+    padding: 0 1rem 1rem 1rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.share-container {
+    display: flex;
+    align-items: center;
     gap: 1rem;
-    border-bottom: 1px solid #ccc;
+    margin-bottom: 0.5rem;
+}
+
+.share {
+    font-family: "Courier New", monospace;
+    font-size: 0.85rem;
+    background-color: #0f172a;
+    color: #38bdf8;
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid #334155;
+
+    display: inline-block;
+    flex-grow: 1;
+    overflow-x: auto;
+    white-space: nowrap;
+
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease-out;
+}
+
+.share:hover {
+    border-color: #38bdf8;
+    background-color: #1e293b;
+}
+
+.share::selection {
+    background: #38bdf8;
+    color: #0f172a;
 }
 
 </style>
+        <style>
+html {
+    scroll-behavior: smooth;
+}
+
+section {
+    padding: 80px 20px;
+    border-bottom: 1px solid #1e293b;
+}
+
+section.hero-section {
+    text-align: center;
+
+    p {
+        font-size: 1.25rem;
+        line-height: 1.6;
+        max-width: 700px;
+        margin-bottom: 40px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+section.motivation {
+    .container {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border: 1px solid #38bdf8;
+        border-radius: 16px;
+        padding: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    h2 {
+        font-family: "Courier New", monospace;
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    p {
+        line-height: 1.7;
+        font-size: 1.05rem;
+        margin-bottom: 25px;
+        position: relative;
+        max-width: 750px;
+    }
+
+    .icon {
+        position: absolute;
+        right: -25px;
+        top: -25px;
+        font-size: 8rem;
+        opacity: 0.04;
+        transform: rotate(-15deg);
+        pointer-events: none;
+    }
+}
+
+section.visual-flow-section {
+    .steps-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 30px;
+        align-items: flex-start;
+    }
+
+    .step-module {
+        flex: 1 1 220px;
+        text-align: center;
+    }
+
+    .image-container {
+        margin-bottom: 24px;
+        position: relative;
+
+        .overlay {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #38bdf8;
+            color: #0f172a;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            border: 2px solid #0f172a;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            opacity: 0.8;
+        }
+    }
+
+    p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+}
+
+section.how-it-works-section {
+    .container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 40px;
+    }
+
+    h3 {
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        color: #38bdf8;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+    }
+
+    p {
+        color: #cbd5e1;
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+}
+
+section.use-cases-section {
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+    }
+
+    .card {
+        flex: 1 1 340px;
+        max-width: 400px;
+        background: #1e293b;
+        padding: 40px;
+        border-radius: 12px;
+        border-bottom: 4px solid #38bdf8;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .icon {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    p {
+        color: #94a3b8;
+        line-height: 1.6;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+}
+
+.faq-section {
+    p {
+        max-width: 100%;
+    }
+}
+
+footer {
+    margin-top: 30px;
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        /* justify-content: space-between; */
+        align-items: flex-start;
+        gap: 40px;
+        padding: 0 80px;
+    }
+
+    h4 {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #475569;
+        margin-bottom: 20px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        font-size: 0.9rem;
+        line-height: 2;
+    }
+
+    a {
+        color: #94a3b8;
+        text-decoration: none;
+    }
+
+    .colophon {
+        margin-top: 60px;
+        text-align: center;
+        color: #475569;
+        font-size: 0.8rem;
+        font-family: "Courier New", monospace;
+    }
+}
+
+.banner {
+    display: inline-block;
+    padding: 6px 12px;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 20px;
+    color: #38bdf8;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+h3 {
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+    color: #f8fafc;
+}
+
+p {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+a {
+    color: #38bdf8;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+img {
+    cursor: pointer;
+}
+
+.cta-container {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+}
+
+#fullPage {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: contain;
+    background-repeat: no-repeat no-repeat;
+    background-position: center center;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+</style>
+        <script>
+function onImageClick(event) {
+    const fullPage = document.getElementById("fullPage");
+
+    fullPage.style.backgroundImage = `url(${event.target.src})`;
+    fullPage.style.display = "block";
+}
+
+</script>
     </head>
     <body>
         <main>
+            <div id="fullPage" onclick="this.style.display='none'"></div>
             <header>
                 <nav>
                     <a href="https://html-vault.com">Home</a>
-                    <a href="https://html-vault.com/split">Split</a>
-                    <a href="https://html-vault.com/combine">Combine parts</a>
+                    <a href="https://html-vault.com/split">Split Tool</a>
+                    <a href="https://html-vault.com/combine">Combine Tool</a>
                 </nav>
             </header>
 
-            <h1>Shamir Secret Sharing Scheme</h1>
+            <section class="hero-section">
+                <div class="banner">Zero-Knowledge • Offline • Open Source</div>
 
-            <p>
-                This tools offers a practical implementation of
-                <a
-                    href="https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Shamir's Secret Sharing Scheme (SSSS)</a
-                >, a cryptographic method for securely splitting a secret into
-                multiple parts. The secret can only be reconstructed when a
-                sufficient number of parts are combined, ensuring that no single
-                part reveals any information about the original secret.
-            </p>
-            <!-- <img src="./schema.png" /> -->
-            <p>
-                This implementation is inspired by
-                <a
-                    href="https://iancoleman.io/shamir/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Ian Coleman's SSSS tool</a
-                >
-                with additional features (e.g. optional encryption,
-                self-contained part files).
-            </p>
+                <h1>
+                    Your Secrets,
+                    <span style="color: #38bdf8">Distributed.</span>
+                </h1>
 
-            <h1>How to use: creating a shared secret</h1>
-            <ul>
-                <li>
-                    Navigate to the
-                    <a href="/split">Split</a> page.
-                </li>
-                <li>
-                    Enter the secret you want to split. This can be any text,
-                    such as a password, a private key, or any sensitive
-                    information.
-                </li>
-                <li>
-                    Specify the total number of parts to create and the minimum
-                    number of parts required to reconstruct the secret.
-                </li>
-                <li>
-                    (Optional) Set a password to encrypt the secret before
-                    splitting it. This adds an extra layer of security.
-                </li>
-                <li>
-                    Either save each part or download them as self-contained
-                    files.
-                </li>
-            </ul>
+                <p>
+                    Securely split sensitive data into self-contained HTML
+                    "parts." Losing one doesn't matter. Stealing one is useless.
+                    Only you and your threshold of parts can bring the secret
+                    back to life.
+                </p>
 
-            <h1>How to use: reconstructing the secret</h1>
-            <ul>
-                <li>
-                    Either navigate to the
-                    <a href="/combine">Combine parts</a> page or open a
-                    self-contained part file.
-                </li>
-                <li>
-                    Paste the other parts needed to reach the minimum threshold.
-                </li>
-                <li>
-                    (If applicable) Enter the password used to encrypt the
-                    secret.
-                </li>
-            </ul>
+                <div class="cta-container">
+                    <a href="/split" class="button"> Split a Secret </a>
+                    <a href="#how-it-works" class="button secondary">
+                        How it Works
+                    </a>
+                </div>
+            </section>
 
-            <h2>References</h2>
-            <p>
-                Inspired by:
-                <a
-                    href="https://iancoleman.io/shamir/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >https://iancoleman.io/shamir/</a
-                >
-            </p>
-            <p>
-                <a
-                    href="https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Shamir Secret Sharing Wikipedia</a
-                >
-            </p>
-            <p>
-                <a
-                    href="https://github.com/RaffaeleCanale/wx-ssss"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Source code</a
-                >
-            </p>
-            <p>
-                <a
-                    href="https://github.com/grempe/secrets.js/tree/master"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Secrets.js library</a
-                >
-            </p>
+            <section class="motivation">
+                <div class="container">
+                    <div class="icon">🔗</div>
+
+                    <h2>Project Context & Motivation</h2>
+
+                    <p>
+                        This project was motivated by the the Hacker News
+                        discussion "<a
+                            href="https://news.ycombinator.com/item?id=37534615"
+                            target="_blank"
+                            >Horcrux: Split your file into encrypted
+                            fragments</a
+                        >" and the desire to create a more self contained and
+                        practical implementation of the same concept for
+                        personal use.
+                    </p>
+                    <p>
+                        The goal was for this tool to work on any platform and
+                        require no dependencies (other than a web browser), and
+                        be future-proof enough to be usable decades from now. An
+                        excellent similar tool was created by Ian Coleman (<a
+                            href="https://iancoleman.io/shamir/"
+                            target="_blank"
+                            >https://iancoleman.io/shamir/</a
+                        >) which heavily inspired this project, this iteration
+                        adds more features such as self-contained parts and
+                        optional password protection.
+                    </p>
+                </div>
+            </section>
+
+            <section id="how-it-works" class="visual-flow-section">
+                <div style="text-align: center; margin-bottom: 60px">
+                    <h2>How to Use</h2>
+                    <p>
+                        The entire process executes locally within your
+                        browser's memory.
+                    </p>
+                </div>
+
+                <div class="steps-container">
+                    <div class="step-module">
+                        <div class="image-container">
+                            <div class="overlay">
+                                <img
+                                    onclick="onImageClick(event)"
+                                    src="part1.png"
+                                    alt="Step 1 Input Schematic"
+                                />
+                            </div>
+                            <div class="badge">1</div>
+                        </div>
+                        <h3>Input Locally</h3>
+                        <p>
+                            Paste your secret (text, seed phrase, password) into
+                            the browser. It never leaves your device.
+                        </p>
+                    </div>
+
+                    <div class="step-module">
+                        <div class="image-container">
+                            <div class="overlay">
+                                <img
+                                    onclick="onImageClick(event)"
+                                    src="part2.png"
+                                    alt="Step 2 Split Schematic"
+                                />
+                            </div>
+                            <div class="badge">2</div>
+                        </div>
+                        <h3>Set Thresholds</h3>
+                        <p>
+                            Define the total number of parts (N) and the minimum
+                            required to recover (K). E.g., "3 of 5".
+                        </p>
+                    </div>
+
+                    <div class="step-module">
+                        <div class="image-container">
+                            <div class="overlay">
+                                <img
+                                    onclick="onImageClick(event)"
+                                    src="part3.png"
+                                    alt="Step 3 Distribute Schematic"
+                                />
+                            </div>
+                            <div class="badge">3</div>
+                        </div>
+                        <h3>Download & Scatter</h3>
+                        <p>
+                            Get individual HTML files. Store them on USBs,
+                            different cloud services, or share them with trusted
+                            contacts.
+                        </p>
+                    </div>
+
+                    <div class="step-module">
+                        <div class="image-container">
+                            <div class="overlay">
+                                <img
+                                    onclick="onImageClick(event)"
+                                    src="part4.png"
+                                    alt="Step 4 Recovery Schematic"
+                                />
+                            </div>
+                            <div class="badge">4</div>
+                        </div>
+                        <h3>Reassemble Anywhere</h3>
+                        <p>
+                            Open any single part file in a browser. Paste in the
+                            remaining required parts to unlock the secret.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="how-it-works-section">
+                <div class="container">
+                    <div>
+                        <h3>01. The Algorithm</h3>
+                        <p>
+                            This tool utilizes
+                            <a
+                                href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing"
+                                target="_blank"
+                                >Shamir's Secret Sharing</a
+                            >
+                            to split data into unique parts. This algorithm
+                            provides Information-Theoretic Security, meaning
+                            that even with infinite computing power, an attacker
+                            with fewer than the required parts can never
+                            reconstruct the secret.
+                        </p>
+                        <p>
+                            The core logic is based on the proven, open-source
+                            <a
+                                href="https://github.com/grempe/secrets.js"
+                                target="_blank"
+                                >secrets.js</a
+                            >
+                            implementation, which was security audited in 2019.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3>02. Fully self-contained</h3>
+                        <p>
+                            All pages are built in a fully self-contained and
+                            static manner, they also have no external
+                            dependencies. This means you can save the split
+                            tool, or combine tool as a simple HTML file and run
+                            it entirely offline, even if this website goes down.
+                        </p>
+                        <p>
+                            All the parts generated by the split tool are also
+                            fully self-contained HTML files, meaning recovery
+                            from parts will always be possible for as long as
+                            web browsers exist.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="use-cases-section">
+                <div style="text-align: center; margin-bottom: 60px">
+                    <h2>Practical Applications</h2>
+                    <p>Scenarios for individual digital resilience.</p>
+                </div>
+
+                <div class="container">
+                    <div class="card">
+                        <div class="icon">🏡</div>
+                        <h3>Digital Inheritance</h3>
+                        <p>
+                            Distribute shares of your master password to family
+                            members. No one can access your accounts alone, but
+                            they can recover access together if you are
+                            incapacitated.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">🌍</div>
+                        <h3>Geographic Redundancy</h3>
+                        <p>
+                            Split your primary email recovery code. Store shares
+                            in different physical locations (home, office, safe)
+                            to ensure a single fire or burglary doesn't lock you
+                            out.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">🤝</div>
+                        <h3>Collaborative Custody</h3>
+                        <p>
+                            Protect sensitive family documents by requiring a
+                            "quorum" of trusted friends to unlock them. This
+                            ensures that no single person holds the power of
+                            access.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="faq-section">
+                <div style="text-align: center; margin-bottom: 60px">
+                    <h2>Frequently Asked Questions</h2>
+                </div>
+
+                <details class="menu">
+                    <summary>What happens if I lose one of the parts?</summary>
+                    <p>
+                        As long as you still have the minimum number of parts
+                        (your threshold <em>k</em>), you can fully recover your
+                        secret. If you fall below that number, the secret is
+                        mathematically impossible to recover.
+                    </p>
+                </details>
+
+                <details class="menu">
+                    <summary>Are individual parts "encrypted"?</summary>
+                    <p>
+                        No, and they don't need to. The individual parts are
+                        secure by design because they are mathematically
+                        incomplete.
+                    </p>
+                    <p>
+                        Unless someone possesses the minimum number of parts you
+                        specified (the threshold), the individual shares they
+                        hold are effectively random noise. They contain zero
+                        information about your original secret, making it
+                        impossible to "crack" or guess. You can store these
+                        files on a USB drive, in the cloud, or on paper without
+                        needing any additional encryption or passwords.
+                    </p>
+                </details>
+
+                <details class="menu">
+                    <summary>
+                        Can I use any browsers for splitting and combining?
+                    </summary>
+                    <p>
+                        Yes. The self-contained HTML files use standard
+                        JavaScript. You can generate them in Chrome on a Mac and
+                        reconstruct them in Firefox on Linux. No internet
+                        connection is required.
+                    </p>
+                </details>
+
+                <details class="menu">
+                    <summary>
+                        Why is there the option to password-protect the secret
+                        when encryption is not needed?
+                    </summary>
+                    <p>
+                        This option allows to add a second layer of security if
+                        needed.
+                    </p>
+                    <p>
+                        The individual parts cannot be deciphered whether a
+                        password is used or not. However, as soon as the minimum
+                        number of parts is gathered, the secret can be
+                        reconstructed.
+                    </p>
+                    <p>
+                        By adding a password, even if an attacker manages to
+                        collect enough parts, they would still need to know the
+                        password to access the original secret.
+                    </p>
+                </details>
+
+                <details class="menu">
+                    <summary>
+                        Is there a limit to how large the secret can be?
+                    </summary>
+                    <p>
+                        While there is no hard mathematical limit, extremely
+                        large secrets will result in very large HTML files and
+                        may slow down your browser's RAM during the splitting
+                        process. It is ideal for text up to 50KB (approx. 10,000
+                        words).
+                    </p>
+                </details>
+            </section>
+
+            <footer>
+                <div class="container">
+                    <div>
+                        <h4>Resources</h4>
+                        <ul>
+                            <li>
+                                <a
+                                    href="https://github.com/RaffaeleCanale/wx-ssss"
+                                    >GitHub Repository</a
+                                >
+                            </li>
+                            <li>
+                                <a href="https://github.com/grempe/secrets.js"
+                                    >grempe/secret.js</a
+                                >
+                            </li>
+                            <li>
+                                <a href="https://github.com/unjs/nanotar"
+                                    >unjs/nanotar</a
+                                >
+                            </li>
+                            <li>
+                                <a href="https://iancoleman.io/shamir/"
+                                    >iancoleman/shamir</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4>Contact</h4>
+                        <ul>
+                            <li>
+                                <a href="mailto:support@canale.io">Email Me</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="colophon">
+                    © 2025 • v1.0.0 • Open Source Utility • No Tracking
+                </div>
+            </footer>
         </main>
     </body>
 </html>
