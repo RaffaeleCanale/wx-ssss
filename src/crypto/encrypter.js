@@ -18,7 +18,7 @@ async function generateKeyFromPassword(password, salt, mode, options) {
             name: "PBKDF2",
             salt,
             iterations: options.iterations,
-            hash: "SHA-1",
+            hash: options.hash,
         },
         passwordKey,
         {
@@ -32,10 +32,11 @@ async function generateKeyFromPassword(password, salt, mode, options) {
 
 function getDefaultOptions() {
     return {
-        blockSize: 16,
+        ivSize: 12,
         saltSize: 16,
         iterations: 1000000,
         keySize: 32,
+        hash: "SHA-256",
     };
 }
 
@@ -48,7 +49,7 @@ async function encrypt(input, passwordStr, options = getDefaultOptions()) {
         options
     );
 
-    const iv = generateRandomBytes(options.blockSize);
+    const iv = generateRandomBytes(options.ivSize);
 
     const cipherBuffer = await window.crypto.subtle.encrypt(
         { name: "AES-GCM", iv },
